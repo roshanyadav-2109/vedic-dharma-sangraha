@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        'devanagari': ['Noto Sans Devanagari', 'sans-serif'],
+        'sanskrit': ['Tiro Devanagari Sanskrit', 'serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
