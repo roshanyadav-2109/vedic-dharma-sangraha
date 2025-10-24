@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Mantra } from "@/types/database";
-import { useSearchParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MantraCard from "@/components/MantraCard";
@@ -10,9 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const MantrasLibrary = () => {
-  const [searchParams] = useSearchParams();
-  const categoryFromUrl = searchParams.get("category") || "all";
-  const [activeCategory, setActiveCategory] = useState(categoryFromUrl);
+  const { category } = useParams<{ category: string }>();
+  const [activeCategory, setActiveCategory] = useState(category || "all");
+
+  useEffect(() => {
+    setActiveCategory(category || "all");
+  }, [category]);
 
   const { data: mantras, isLoading } = useQuery({
     queryKey: ["mantras"],
@@ -63,17 +66,17 @@ const MantrasLibrary = () => {
             className="max-w-6xl mx-auto"
           >
             <TabsList className="w-full justify-start overflow-x-auto flex-wrap h-auto mb-8">
-              <TabsTrigger value="all" className="font-devanagari">
-                सभी
-              </TabsTrigger>
-              {categories.map((category) => (
-                <TabsTrigger
-                  key={category}
-                  value={category}
-                  className="font-devanagari"
-                >
-                  {category}
+              <Link to="/mantras">
+                <TabsTrigger value="all" className="font-devanagari">
+                  सभी
                 </TabsTrigger>
+              </Link>
+              {categories.map((cat) => (
+                <Link key={cat} to={`/mantras/${cat}`}>
+                  <TabsTrigger value={cat} className="font-devanagari">
+                    {cat}
+                  </TabsTrigger>
+                </Link>
               ))}
             </TabsList>
 
