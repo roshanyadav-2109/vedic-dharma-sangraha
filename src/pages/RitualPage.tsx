@@ -55,34 +55,28 @@ const RitualPage = () => {
   }
 
   const renderContent = (contentJson: any) => {
-    if (typeof contentJson === 'string') {
-      return <p className="font-devanagari text-foreground/80 leading-relaxed whitespace-pre-wrap">{contentJson}</p>;
-    }
-
-    if (Array.isArray(contentJson)) {
-      return contentJson.map((item, index) => (
-        <div key={index} className="mb-6">
-          {item.type === 'heading' && (
-            <h3 className="text-2xl font-bold font-devanagari text-primary mb-3">{item.text}</h3>
+    if (contentJson && contentJson.steps) {
+      return (
+        <div>
+          {contentJson.introduction && (
+            <p className="font-devanagari text-foreground/80 leading-relaxed mb-6">
+              {contentJson.introduction}
+            </p>
           )}
-          {item.type === 'paragraph' && (
-            <p className="font-devanagari text-foreground/80 leading-relaxed mb-4">{item.text}</p>
-          )}
-          {item.type === 'list' && (
-            <ul className="space-y-2 mb-4">
-              {item.items?.map((listItem: string, i: number) => (
-                <li key={i} className="flex items-start">
-                  <span className="text-primary mr-2">•</span>
-                  <span className="font-devanagari text-foreground/80">{listItem}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+          {contentJson.steps.map((step: any, index: number) => (
+            <div key={index} className="mb-6">
+              <h3 className="text-2xl font-bold font-devanagari text-primary mb-3">
+                {step.title}
+              </h3>
+              <p className="font-devanagari text-foreground/80 leading-relaxed whitespace-pre-wrap">
+                {step.mantra}
+              </p>
+            </div>
+          ))}
         </div>
-      ));
+      );
     }
-
-    return null;
+    return <p>Invalid content format.</p>;
   };
 
   return (
