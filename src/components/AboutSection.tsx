@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import omMandala from "@/assets/om-mandala.jpg";
+import { Button } from "./ui/button";
 
 const AboutSection = () => {
   return (
@@ -51,14 +52,17 @@ const AboutSection = () => {
                   "वेदो अखिलो धर्ममूलम्" - समस्त धर्म का मूल वेद है। ये मंत्र हमारी प्राचीन वैदिक परंपरा की अमूल्य धरोहर हैं।
                 </p>
               </Card>
+              <div className="relative justify-center">
+                <Button variant="interactive">Explore</Button>
+              </div>
             </div>
 
             {/* Image */}
             <div className="order-first md:order-last">
               <div className="relative">
                 <div className="rounded-3xl overflow-hidden temple-shadow divine-glow">
-                  <img 
-                    src={omMandala} 
+                  <img
+                    src={omMandala}
                     alt="ॐ मण्डल"
                     className="w-full h-auto"
                   />
