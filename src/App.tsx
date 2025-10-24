@@ -27,7 +27,11 @@ const App = () => (
           <Route path="/bhajans" element={<BhajansIndex />} />
           <Route path="/bhajans/:id" element={<BhajanDetail />} />
           <Route path="/festivals/:slug" element={<FestivalPage />} />
+          
+          {/* UPDATED ROUTES FOR MANTRAS */}
           <Route path="/mantras" element={<MantrasLibrary />} />
+          <Route path="/mantras/:category" element={<MantrasLibrary />} />
+
           <Route path="/donate" element={<DonatePage />} />
           <Route path="/:slug" element={<StaticPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
