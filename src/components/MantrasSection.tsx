@@ -1,48 +1,23 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Mantra } from "@/types/database";
 import MantraCard from "./MantraCard";
+import { Skeleton } from "./ui/skeleton";
 
 const MantrasSection = () => {
-  const mantras = [
-    {
-      title: "उपस्थान मन्त्र",
-      mantra: "ॐ । उद्यं तमसस्परि स्वः पश्यन्त उत्तरम् । देवं देवत्रा सूर्यमगन्म ज्योतिरुत्तमम् ॥",
-      meaning: "हे ईश्वर! हम अंधकार से ऊपर उठकर उत्तम प्रकाश को देखते हुए, सर्वश्रेष्ठ ज्योति स्वरूप सूर्य देव को प्राप्त करें।"
+  const { data: mantras, isLoading } = useQuery({
+    queryKey: ["mantras-home"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("mantras")
+        .select("*")
+        .limit(8)
+        .order("id");
+
+      if (error) throw error;
+      return data as Mantra[];
     },
-    {
-      title: "ब्रह्म यज्ञ मन्त्र",
-      mantra: "ॐ । उदुत्यं जातवेदसं देवं वहन्ति केतवः । दृशे विश्वाय सूर्यम् ॥",
-      meaning: "सभी प्राणी जातवेदस् (अग्नि) और देवस्वरूप सूर्य को विश्व को दिखाने के लिए ऊपर उठाते हैं।"
-    },
-    {
-      title: "अग्नि मन्त्र",
-      mantra: "ॐ । चित्रं देवानामुदगादनीकं चक्षुर्मित्रस्य वरुणस्यागनेः । आप्रा घावापृथिवी अन्तरिक्षं सूर्य आत्मा जगतस्तस्थुषश्च स्वाहा ।",
-      meaning: "देवों का चमत्कारिक चिन्ह उदय हुआ है। यह मित्र, वरुण और अग्नि का नेत्र है। सूर्य ही जगत की आत्मा है।"
-    },
-    {
-      title: "शान्ति मन्त्र",
-      mantra: "ॐ । तच्चक्षुर्देवहितं पुरस्ताच्छुक्रमुच्चरत् । पश्येम शरदः शतं जीवेम शरदः शतं शृणुयाम शरदः शतं प्रब्रवाम शरदः शतमदीनाः स्याम शरदः शतं भूयश्च शरदः शतात् ॥",
-      meaning: "हे ईश्वर! हम सौ वर्ष तक देखें, जीवें, सुनें, बोलें और स्वस्थ रहें। सौ वर्षों से भी अधिक जीवन प्राप्त करें।"
-    },
-    {
-      title: "गुरु मन्त्र",
-      mantra: "ॐ । भूर्भुवः स्वः । तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि । धियो यो नः प्रचोदयात् ॥",
-      meaning: "हम उस प्राणस्वरूप, दुःखनाशक, सुखस्वरूप, श्रेष्ठ, तेजस्वी, पापनाशक, देवस्वरूप परमात्मा को धारण करें। वह परमात्मा हमारी बुद्धि को सन्मार्ग में प्रेरित करे।"
-    },
-    {
-      title: "समर्पण मन्त्र",
-      mantra: "हे ईश्वर दयानिधे ! भवत्कृपया अनेन जपोपासनादि कर्मणा धर्मार्थिकामोक्षाणां सहः सिद्धिर्भवेन्नः ।",
-      meaning: "हे दयानिधे ईश्वर! आपकी कृपा से इस जप और उपासना से हमें धर्म, अर्थ, काम और मोक्ष की सिद्धि हो।"
-    },
-    {
-      title: "नमस्कार मन्त्र",
-      mantra: "ॐ । नमः शम्भवाय च मयोभवाय च नमः शंकराय च मयस्कराय च नमः शिवाय च शिवतराय च ॥",
-      meaning: "कल्याणकारी, सुखदायक, शंकर, मंगलकारी, शिव और कल्याणतम ईश्वर को नमस्कार।"
-    },
-    {
-      title: "संध्योपासना",
-      mantra: "इति संध्योपासना",
-      meaning: "इस प्रकार संध्या उपासना संपन्न होती है।"
-    }
-  ];
+  });
 
   return (
     <section id="mantras" className="py-20 bg-background">
@@ -59,16 +34,24 @@ const MantrasSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-          {mantras.map((mantra, index) => (
-            <MantraCard
-              key={index}
-              title={mantra.title}
-              mantra={mantra.mantra}
-              meaning={mantra.meaning}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-64 w-full" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+            {mantras?.slice(0, 8).map((mantra) => (
+              <MantraCard
+                key={mantra.id}
+                title={mantra.title}
+                mantra={mantra.content || ""}
+                meaning={undefined}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
