@@ -1,22 +1,24 @@
 // src/components/ui/LayoutSidebar.tsx
 import React, { useState, createContext, useContext, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+// Remove motion imports if animate=false is always used for desktop
+// import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button"; // Import shadcn Button
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent } from "@/components/ui/sheet"; // Keep Sheet for Mobile potentially
 
 // Interface for sidebar links (or items in this case)
-interface SidebarItem {
-  id: string | number; // Use Bhajan ID
-  label: string;      // Use Bhajan Title
-  icon?: React.ReactNode; // Optional icon
-  onClick?: () => void; // Action on click
+export interface SidebarItemProps {
+  id: string | number;
+  label: string;
+  icon?: React.ReactNode;
+  onClick?: () => void;
 }
 
 interface SidebarContextProps {
-  open: boolean;
+  open: boolean; // Keep for mobile sheet state
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  animate: boolean;
+  // animate: boolean; // Removed animate from context if always false for desktop
 }
 
 const SidebarContext = createContext<SidebarContextProps | undefined>(
@@ -31,152 +33,103 @@ export const useSidebar = () => {
   return context;
 };
 
-// Provider component
+// Provider component - Manages state primarily for mobile sheet now
 export const SidebarProvider = ({
   children,
   open: openProp,
   setOpen: setOpenProp,
-  animate = true,
 }: {
   children: React.ReactNode;
-  open?: boolean;
+  open?: boolean; // Mobile sheet open state
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  animate?: boolean;
 }) => {
-  const [openState, setOpenState] = useState(true); // Default to open on desktop
+  const [openState, setOpenState] = useState(false); // Default mobile sheet to closed
 
   // Allow controlled state
   const open = openProp !== undefined ? openProp : openState;
   const setOpen = setOpenProp !== undefined ? setOpenProp : setOpenState;
 
-  // Use effect to handle initial state based on screen size if needed
-  // useEffect(() => {
-  //   if (window.innerWidth < 768) setOpen(false); // Default closed on mobile
-  // }, [setOpen]);
-
-
   return (
-    <SidebarContext.Provider value={{ open, setOpen, animate }}>
+    // Removed animate from context value
+    <SidebarContext.Provider value={{ open, setOpen }}>
       {children}
     </SidebarContext.Provider>
   );
 };
 
-// Main Sidebar component wrapper
+// Main Sidebar component wrapper - Pass state for mobile sheet
 export const Sidebar = ({
   children,
-  open,
-  setOpen,
-  animate,
+  open, // Mobile sheet open state
+  setOpen, // Mobile sheet setOpen state
 }: {
   children: React.ReactNode;
   open?: boolean;
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  animate?: boolean;
 }) => {
   return (
-    <SidebarProvider open={open} setOpen={setOpen} animate={animate}>
+    <SidebarProvider open={open} setOpen={setOpen}>
       {children}
     </SidebarProvider>
   );
 };
 
-// Component to hold both desktop and mobile versions
-export const SidebarBody = (props: React.ComponentProps<typeof motion.div>) => {
-  return (
-    <>
-      <DesktopSidebar {...props} />
-      {/* Mobile sidebar trigger handled separately in page layout */}
-    </>
-  );
-};
-
-// Desktop specific sidebar
-export const DesktopSidebar = ({
+// Component to hold the desktop sidebar implementation (simplified)
+export const SidebarBody = ({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof motion.div>) => {
-  const { open, setOpen, animate } = useSidebar();
+}: React.ComponentProps<"div">) => { // Changed from motion.div props
+  // Removed context usage related to animation/hover
   return (
-    <motion.div
+    <div // Changed from motion.div
       className={cn(
-        // Adjusted styles to use theme variables
-        "h-full px-4 py-4 hidden md:flex md:flex-col bg-card border-r border-border w-[300px] flex-shrink-0 relative", // Added relative positioning
+        // Always visible desktop sidebar, fixed width
+        "h-full px-4 py-4 hidden md:flex md:flex-col bg-card border-r border-border w-[300px] flex-shrink-0",
         className
       )}
-      // Animate width only if animate prop is true
-      animate={{
-        width: animate ? (open ? "300px" : "60px") : "300px",
-      }}
-      // Expand on hover
-      onMouseEnter={() => animate && setOpen(true)}
-      onMouseLeave={() => animate && setOpen(false)}
       {...props}
     >
-        {/* Toggle Button for Desktop (optional, if you want manual toggle) */}
-        {/* <Button variant="ghost" size="icon" onClick={() => setOpen(!open)} className="absolute top-2 right-2 z-10">
-            {open ? <X size={18}/> : <Menu size={18} />}
-        </Button> */}
       {children}
-    </motion.div>
-  );
-};
-
-// Mobile specific sidebar (using shadcn Sheet)
-export const MobileSidebar = ({
-  className,
-  children,
-}: React.ComponentProps<"div">) => {
-  const { open, setOpen } = useSidebar();
-  return (
-    <Sheet open={open} onOpenChange={setOpen}>
-        {/* Trigger is handled outside this component */}
-        <SheetContent side="left" className={cn("bg-card border-r border-border p-4 pt-10 w-full max-w-xs", className)}>
-            {/* Close button is included in SheetContent */}
-            {children}
-        </SheetContent>
-    </Sheet>
+    </div>
   );
 };
 
 
-// Sidebar Item Component
+// Sidebar Item Component (simplified, no animation needed)
 export const SidebarItem = ({
   item,
   className,
-  isActive // Add isActive prop
+  isActive
 }: {
-  item: SidebarItem;
+  item: SidebarItemProps;
   className?: string;
-  isActive?: boolean; // Highlight active item
+  isActive?: boolean;
 }) => {
-  const { open, animate } = useSidebar();
+  // Removed context usage for open/animate
   return (
     <Button
-        variant="ghost" // Use ghost variant for list items
+        variant="ghost"
         onClick={item.onClick}
         className={cn(
-            "flex items-center justify-start gap-2 group/sidebar py-2 w-full h-auto text-sm", // Adjusted styles
-            "text-muted-foreground hover:text-foreground hover:bg-muted", // Theme colors
-            isActive && "bg-muted text-foreground font-medium", // Active state styles
+            "flex items-center justify-start gap-2 group/sidebar py-2 w-full h-auto text-sm px-2", // Keep gap and padding
+            "text-muted-foreground hover:text-foreground hover:bg-muted",
+            isActive && "bg-muted text-foreground font-medium",
             className
         )}
     >
-      {item.icon && React.isValidElement(item.icon) ? React.cloneElement(item.icon as React.ReactElement, { className: cn("h-4 w-4 flex-shrink-0", isActive ? "text-primary" : "") }) : null}
-      <motion.span
-        // Animate visibility based on open state
-        animate={{
-          display: animate ? (open ? "inline-block" : "none") : "inline-block",
-          opacity: animate ? (open ? 1 : 0) : 1,
-        }}
+      {/* Icon */}
+      {item.icon && React.isValidElement(item.icon) ? React.cloneElement(item.icon as React.ReactElement, { className: cn("h-4 w-4 flex-shrink-0 transition-colors", isActive ? "text-primary" : "") }) : <span className="w-4 h-4 flex-shrink-0"></span>}
+
+      {/* Label Text - Always visible */}
+      <span
         className={cn(
-            "group-hover/sidebar:translate-x-1 transition duration-150 whitespace-nowrap overflow-hidden text-ellipsis", // Added ellipsis
-            "inline-block !p-0 !m-0" // Reset paragraph margins/paddings
+            "whitespace-nowrap overflow-hidden text-ellipsis ml-2", // Keep ellipsis, add ml-2 for gap
+            "inline-block !p-0 !m-0"
             )}
       >
         {item.label}
-      </motion.span>
+      </span>
     </Button>
   );
 };
