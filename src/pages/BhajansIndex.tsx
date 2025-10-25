@@ -1,19 +1,20 @@
 // src/pages/BhajansIndex.tsx
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Bhajan } from "@/types/database";
-import { Navbar } from "@/components/Navbar"; // Assuming Navbar export is default or named
-import Footer from "@/components/Footer"; // Correct: Default import (no curly braces) // Assuming Footer export is default or named
+import Navbar from "@/components/Navbar"; // Corrected import
+import Footer from "@/components/Footer"; // Corrected import
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, Music2, Loader2, Copy, Check } from "lucide-react"; // Added icons
+import { Search, Music2, Loader2, Copy, Check, Menu } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Sidebar, SidebarBody, SidebarItem } from "@/components/ui/LayoutSidebar"; // Import Sidebar components
-import { ScrollArea } from "@/components/ui/scroll-area"; // Import ScrollArea
-import { useDebounce } from "@/hooks/use-debounce"; // Import debounce hook
-import { Button } from "@/components/ui/button"; // Import Button
-import { toast } from "sonner"; // Import toast
+import { Sidebar, SidebarBody, SidebarItem, SidebarProvider } from "@/components/ui/LayoutSidebar"; // Import SidebarProvider
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useDebounce } from "@/hooks/use-debounce";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"; // Import Sheet components for mobile trigger
 
 // Type for Bhajan list items
 type BhajanListItem = Pick<Bhajan, 'id' | 'title'>;
@@ -23,6 +24,8 @@ const BhajansIndex = () => {
   const [selectedBhajanId, setSelectedBhajanId] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false); // State for mobile sheet
+
 
   // --- Query 1: Fetch all Bhajan titles for the sidebar ---
   const { data: allBhajans, isLoading: isLoadingList } = useQuery({
@@ -90,57 +93,78 @@ const BhajansIndex = () => {
     }
   };
 
+  // --- Sidebar Content Memoized ---
+   const sidebarContent = useMemo(() => (
+     <div className="flex flex-col h-full">
+        <ScrollArea className="flex-grow p-2">
+          {isLoadingList ? (
+            <div className="space-y-2 px-2">
+              {[...Array(10)].map((_, i) => <Skeleton key={i} className="h-9 w-full" />)}
+            </div>
+          ) : (
+            filteredBhajans.map((bhajan) => (
+              <SidebarItem
+                key={bhajan.id}
+                item={{
+                  id: bhajan.id,
+                  label: bhajan.title,
+                  icon: <Music2 />,
+                  onClick: () => {
+                      setSelectedBhajanId(bhajan.id);
+                      setIsMobileSidebarOpen(false); // Close mobile sidebar on selection
+                    },
+                }}
+                isActive={selectedBhajanId === bhajan.id}
+                className="font-devanagari"
+              />
+            ))
+          )}
+          {!isLoadingList && filteredBhajans.length === 0 && (
+            <p className="p-4 text-center text-sm text-muted-foreground font-devanagari">कोई भजन नहीं मिला</p>
+          )}
+        </ScrollArea>
+     </div>
+   ), [isLoadingList, filteredBhajans, selectedBhajanId, setSelectedBhajanId]);
+
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="flex flex-1 pt-16"> {/* Add padding-top to account for fixed Navbar */}
+       {/* Adjust overall layout for mobile trigger */}
+       <div className="flex flex-1 pt-16">
 
-        {/* --- Sidebar --- */}
-        <Sidebar> {/* Wrap SidebarBody in Sidebar for context */}
-          <SidebarBody>
-            <div className="flex flex-col h-full">
-               {/* Sidebar Header (Optional) */}
-               {/* <div className="p-4 border-b border-border">
-                  <h2 className="text-lg font-semibold font-devanagari">भजन सूची</h2>
-               </div> */}
-              <ScrollArea className="flex-grow p-2"> {/* Scrollable list */}
-                {isLoadingList ? (
-                  <div className="space-y-2 px-2">
-                    {[...Array(8)].map((_, i) => <Skeleton key={i} className="h-9 w-full" />)}
-                  </div>
-                ) : (
-                  filteredBhajans.map((bhajan) => (
-                    <SidebarItem
-                      key={bhajan.id}
-                      item={{
-                        id: bhajan.id,
-                        label: bhajan.title,
-                        icon: <Music2 />, // Add an icon
-                        onClick: () => setSelectedBhajanId(bhajan.id),
-                      }}
-                      isActive={selectedBhajanId === bhajan.id}
-                      className="font-devanagari" // Apply font
-                    />
-                  ))
-                )}
-                 {!isLoadingList && filteredBhajans.length === 0 && (
-                     <p className="p-4 text-center text-sm text-muted-foreground font-devanagari">कोई भजन नहीं मिला</p>
-                 )}
-              </ScrollArea>
-            </div>
-          </SidebarBody>
-        </Sidebar>
+          {/* Mobile Sidebar Trigger - Positioned absolutely */}
+         <div className="md:hidden absolute top-16 left-0 z-30 p-2">
+            <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
+                <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <Menu className="h-6 w-6" />
+                        <span className="sr-only">Open Sidebar</span>
+                    </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="bg-card border-r border-border p-0 pt-10 w-full max-w-xs">
+                    {sidebarContent}
+                </SheetContent>
+            </Sheet>
+         </div>
+
+
+        {/* --- Sidebar (Desktop) --- */}
+         <SidebarProvider animate={true}> {/* Use provider for context */}
+            <SidebarBody className="h-[calc(100vh-4rem)] sticky top-16"> {/* Make desktop sidebar sticky */}
+                {sidebarContent}
+            </SidebarBody>
+         </SidebarProvider>
 
         {/* --- Main Content Area --- */}
         <main className="flex-1 flex flex-col p-4 md:p-8 overflow-y-auto">
-          {/* Search Bar */}
-          <div className="relative mb-6 w-full max-w-xl mx-auto">
+          {/* Search Bar - Adjusted margins for mobile */}
+          <div className="relative mb-6 mt-12 md:mt-0 w-full max-w-xl mx-auto">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
             <Input
               type="text"
               placeholder="भजन खोजें..."
-              className="pl-10 font-devanagari w-full" // Ensure full width
+              className="pl-10 font-devanagari w-full"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -149,7 +173,7 @@ const BhajansIndex = () => {
           {/* Bhajan Display Area */}
           <div className="flex-grow max-w-4xl w-full mx-auto">
             {selectedBhajanId === null && !isLoadingDetail && (
-              <Card className="h-full flex items-center justify-center border-dashed border-border/50 bg-muted/20">
+              <Card className="h-full flex items-center justify-center border-dashed border-border/50 bg-muted/20 min-h-[400px]">
                 <p className="text-muted-foreground font-devanagari text-center p-8">
                   कृपया सूची से एक भजन चुनें<br/>या ऊपर खोजें
                 </p>
@@ -157,7 +181,7 @@ const BhajansIndex = () => {
             )}
 
             {(isLoadingDetail || isFetchingDetail) && selectedBhajanId !== null && (
-                 <Card className="p-8 temple-shadow">
+                 <Card className="p-8 temple-shadow min-h-[400px]">
                      <div className="flex justify-center mb-8">
                          <Loader2 className="h-10 w-10 animate-spin text-primary" />
                      </div>
@@ -179,12 +203,6 @@ const BhajansIndex = () => {
                     <CardTitle className="text-3xl md:text-4xl font-bold font-devanagari text-gradient mb-1">
                       {selectedBhajan.title}
                     </CardTitle>
-                    {/* Optional: Add page number if needed */}
-                    {/* {selectedBhajan.page_number && (
-                        <p className="text-sm font-devanagari text-muted-foreground">
-                            पृष्ठ {selectedBhajan.page_number}
-                        </p>
-                    )} */}
                   </div>
                    <Button
                       onClick={handleCopy}
@@ -202,7 +220,6 @@ const BhajansIndex = () => {
                     </Button>
                 </CardHeader>
                 <CardContent className="prose prose-lg max-w-none">
-                  {/* Use pre-wrap for line breaks */}
                   <pre className="text-xl font-sanskrit text-foreground/90 leading-relaxed whitespace-pre-wrap font-sans bg-transparent p-0 border-none overflow-x-auto">
                     {selectedBhajan.lyrics || "No lyrics available."}
                   </pre>
