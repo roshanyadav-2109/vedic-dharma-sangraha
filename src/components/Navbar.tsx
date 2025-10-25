@@ -50,9 +50,7 @@ const Navbar = () => {
               {item.title}
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              {/* Updated Structure for Content */}
               <ul className="grid gap-3 p-4 w-[400px] md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                {/* Call the content renderer */}
                 {renderNavMenuContentItems(item.children!)}
               </ul>
             </NavigationMenuContent>
@@ -61,7 +59,6 @@ const Navbar = () => {
       } else {
         return (
           <NavigationMenuItem key={item.id}>
-             {/* Use NavigationMenuLink and style it like a trigger */}
              <NavigationMenuLink href={item.link || "#"} className={cn(navigationMenuTriggerStyle(), "font-devanagari")}>
                {item.title}
              </NavigationMenuLink>
@@ -71,30 +68,25 @@ const Navbar = () => {
     });
   };
 
-   // --- NEW Helper Function to Render Items INSIDE NavigationMenuContent ---
+   // --- Helper Function to Render Items INSIDE NavigationMenuContent ---
    const renderNavMenuContentItems = (items: NavItemWithChildren[]) => {
       return items.map((item) => {
          const hasChildren = item.children && item.children.length > 0;
 
-         // If this item itself has children (secondary submenu)
          if (hasChildren) {
              return (
-                 // Render as a group: Title + List of child ListItems
-                 // Using React.Fragment to avoid unnecessary wrapping elements affecting grid
                  <React.Fragment key={`${item.id}-group`}>
-                     {/* Column Span for Title if using grid */}
-                     <li className="md:col-span-2 lg:col-span-2"> {/* Adjust span as needed */}
+                     <li className="md:col-span-2 lg:col-span-2">
                          <p className="px-3 py-2 text-sm font-semibold text-foreground font-devanagari">
                              {item.title}
                          </p>
-                         <ul className="grid gap-1 pl-3"> {/* Nested list for children */}
-                             {renderNavMenuContentItems(item.children!)} {/* Recursive call */}
+                         <ul className="grid gap-1 pl-3">
+                             {renderNavMenuContentItems(item.children!)}
                          </ul>
                      </li>
                  </React.Fragment>
              );
          }
-         // If it's a leaf node (simple link)
          else {
              return (
                  <ListItem
@@ -103,7 +95,6 @@ const Navbar = () => {
                    href={item.link || "#"}
                    className="font-devanagari"
                  >
-                   {/* Add a short description if available in your data, otherwise keep title */}
                    {item.title}
                  </ListItem>
              );
@@ -116,7 +107,7 @@ const Navbar = () => {
    const renderMobileMenuItems = (items: NavItemWithChildren[], level = 0) => {
     return items.map((item) => {
        const hasChildren = item.children && item.children.length > 0;
-       const paddingLeft = `${level * 1}rem`; // Indent based on level
+       const paddingLeft = `${level * 1}rem`;
 
        return (
          <div key={item.id}>
@@ -152,14 +143,15 @@ const Navbar = () => {
   if (isLoading) {
     return (
       <nav className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border temple-shadow h-16 flex items-center">
-        <div className="container mx-auto px-4 flex justify-center items-center"> {/* Centered skeleton */}
+        {/* Changed justify-between to justify-center */}
+        <div className="container mx-auto px-4 flex justify-center items-center relative">
              <div className="flex items-center space-x-2">
                 <Skeleton className="h-8 w-20" />
                 <Skeleton className="h-8 w-24" />
                 <Skeleton className="h-8 w-20" />
              </div>
-             {/* Keep mobile skeleton off to the side */}
-             <Skeleton className="h-10 w-10 md:hidden absolute right-4 top-1/2 -translate-y-1/2" />
+             {/* Position mobile skeleton absolutely */}
+             <Skeleton className="h-10 w-10 md:hidden absolute left-4 top-1/2 -translate-y-1/2" />
         </div>
       </nav>
     );
@@ -168,10 +160,10 @@ const Navbar = () => {
   // --- Render Component ---
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border temple-shadow h-16 flex items-center">
-      {/* Centered container for desktop menu */}
-      <div className="container mx-auto px-4 flex justify-center md:justify-between items-center">
+      {/* Changed justify-between to justify-center */}
+      <div className="container mx-auto px-4 flex justify-center items-center relative">
 
-        {/* Desktop Navigation using NavigationMenu */}
+        {/* Desktop Navigation using NavigationMenu - Now centered */}
         <div className="hidden md:flex">
           <NavigationMenu>
             <NavigationMenuList>
@@ -180,8 +172,8 @@ const Navbar = () => {
           </NavigationMenu>
         </div>
 
-        {/* Mobile Menu Trigger using Sheet (Positioned absolutely for small screens) */}
-        <div className="md:hidden absolute left-4 top-1/2 -translate-y-1/2"> {/* Position button left */}
+        {/* Mobile Menu Trigger using Sheet (Positioned absolutely) */}
+        <div className="md:hidden absolute left-4 top-1/2 -translate-y-1/2">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -195,14 +187,7 @@ const Navbar = () => {
           </Sheet>
         </div>
 
-         {/* Mobile Title/Placeholder (Optional) - Removed absolute positioning */}
-         {/* <div className="md:hidden"> */}
-             {/* You could add a small icon or text here if needed, centered by the parent flex */}
-         {/* </div> */}
-
-         {/* Empty div on the right for desktop to balance justify-between */}
-         <div className="hidden md:flex w-10"></div>
-
+        {/* Removed the empty spacer div */}
 
       </div>
     </nav>
