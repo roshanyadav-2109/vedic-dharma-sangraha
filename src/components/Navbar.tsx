@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Menu, X, ChevronDown, ChevronRight } from "lucide-react"; // Added ChevronRight
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 // Updated imports from useNavigation hook
 import { useNavigation, buildMenuTree, NavItemWithChildren, NavigationItem } from "@/hooks/useNavigation";
