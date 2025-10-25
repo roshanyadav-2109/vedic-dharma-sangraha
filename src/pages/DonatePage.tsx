@@ -18,7 +18,7 @@ const DonatePage = () => {
     e.preventDefault();
     
     if (!amount || !name || !email) {
-      toast.error("कृपया सभी फ़ील्ड भरें");
+      toast.error("Please fill in all fields");
       return;
     }
 
@@ -28,7 +28,7 @@ const DonatePage = () => {
     // After successful payment, call edge function to verify and store
     
     setTimeout(() => {
-      toast.success("धन्यवाद! आपका दान स्वीकार किया गया है।");
+      toast.success("Thank you! Your donation has been received.");
       setIsProcessing(false);
       setAmount("");
       setName("");
@@ -47,19 +47,19 @@ const DonatePage = () => {
             <div className="inline-block p-6 rounded-full sacred-gradient divine-glow mb-4">
               <Heart className="w-16 h-16 text-primary-foreground" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold font-devanagari text-gradient mb-4">
-              दान करें
+            <h1 className="text-4xl md:text-5xl font-bold text-gradient mb-4">
+              Support Our Cause
             </h1>
-            <p className="text-lg font-devanagari text-muted-foreground">
-              वैदिक ज्ञान के प्रसार में सहयोग करें
+            <p className="text-lg text-muted-foreground">
+              Help us spread Vedic knowledge and support our humanitarian efforts
             </p>
           </div>
 
           <Card className="p-8 temple-shadow">
             <form onSubmit={handleDonate} className="space-y-6">
               <div>
-                <Label htmlFor="amount" className="font-devanagari text-lg mb-3 block">
-                  राशि चुनें (₹)
+                <Label htmlFor="amount" className="text-lg mb-3 block">
+                  Select Amount (₹)
                 </Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                   {presetAmounts.map((preset) => (
@@ -68,7 +68,6 @@ const DonatePage = () => {
                       type="button"
                       variant={amount === preset.toString() ? "default" : "outline"}
                       onClick={() => setAmount(preset.toString())}
-                      className="font-devanagari"
                     >
                       ₹{preset}
                     </Button>
@@ -77,30 +76,28 @@ const DonatePage = () => {
                 <Input
                   id="amount"
                   type="number"
-                  placeholder="अन्य राशि दर्ज करें"
+                  placeholder="Enter custom amount"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="font-devanagari"
                 />
               </div>
 
               <div>
-                <Label htmlFor="name" className="font-devanagari text-lg mb-2 block">
-                  नाम
+                <Label htmlFor="name" className="text-lg mb-2 block">
+                  Full Name
                 </Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="अपना नाम दर्ज करें"
+                  placeholder="Enter your name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="font-devanagari"
                 />
               </div>
 
               <div>
-                <Label htmlFor="email" className="font-devanagari text-lg mb-2 block">
-                  ईमेल
+                <Label htmlFor="email" className="text-lg mb-2 block">
+                  Email Address
                 </Label>
                 <Input
                   id="email"
@@ -114,16 +111,16 @@ const DonatePage = () => {
               <Button
                 type="submit"
                 size="lg"
-                className="w-full sacred-gradient text-primary-foreground font-devanagari text-xl divine-glow"
+                className="w-full sacred-gradient text-primary-foreground text-xl divine-glow"
                 disabled={isProcessing}
               >
-                {isProcessing ? "प्रक्रिया में..." : "दान करें"}
+                {isProcessing ? "Processing..." : "Donate Now"}
               </Button>
             </form>
 
             <div className="mt-8 pt-6 border-t border-border">
-              <p className="text-sm font-devanagari text-muted-foreground text-center">
-                आपका दान वैदिक ज्ञान के संरक्षण और प्रसार में सहायक होगा। धन्यवाद!
+              <p className="text-sm text-muted-foreground text-center">
+                Your donation helps preserve and spread Vedic knowledge. Thank you for your support!
               </p>
             </div>
           </Card>

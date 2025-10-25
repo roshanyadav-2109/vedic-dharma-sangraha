@@ -52,3 +52,42 @@ export interface Donation {
   payment_provider_id: string | null;
   created_at: string;
 }
+
+export interface Disciple {
+  id: number;
+  name: string;
+  description: string | null;
+  image_url: string | null;
+  created_at: string;
+}
+
+export interface EventNewsItem {
+  id: number;
+  title: string;
+  description: string | null;
+  event_date: string | null;
+  location: string | null;
+  image_url: string | null;
+  created_at: string;
+}
+
+export interface GalleryItem {
+  id: number;
+  type: 'image' | 'video';
+  url: string;
+  thumbnail_url: string | null;
+  description: string | null;
+  created_at: string;
+}
+
+export interface GlobalCenter {
+  id: number;
+  country: string;
+  city: string | null;
+  center_name: string | null;
+  address: string | null;
+  contact_details: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  created_at: string;
+}

@@ -11,36 +11,36 @@ const Footer = () => {
                   <span className="text-xl font-bold text-primary-foreground">ॐ</span>
                 </div>
                 <h3 className="text-xl font-bold font-devanagari text-gradient">
-                  वैदिक हवन पद्धति
+                  आर्य समाज
                 </h3>
               </div>
-              <p className="text-sm font-devanagari text-muted-foreground leading-relaxed">
-                सनातन धर्म की शाश्वत परंपरा और वैदिक ज्ञान का पवित्र संग्रह
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Preserving and spreading the eternal wisdom of the Vedas
               </p>
             </div>
 
             {/* Quick Links */}
             <div>
-              <h4 className="font-bold font-devanagari text-foreground mb-4">त्वरित लिंक</h4>
+              <h4 className="font-bold text-foreground mb-4">Quick Links</h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#home" className="text-sm font-devanagari text-muted-foreground hover:text-primary transition-colors">
-                    मुख्य पृष्ठ
+                  <a href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                    Home
                   </a>
                 </li>
                 <li>
-                  <a href="#mantras" className="text-sm font-devanagari text-muted-foreground hover:text-primary transition-colors">
-                    मंत्र संग्रह
+                  <a href="/mantras" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                    Mantras
                   </a>
                 </li>
                 <li>
-                  <a href="#havan" className="text-sm font-devanagari text-muted-foreground hover:text-primary transition-colors">
-                    हवन विधि
+                  <a href="/bhajans" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                    Bhajans
                   </a>
                 </li>
                 <li>
-                  <a href="#about" className="text-sm font-devanagari text-muted-foreground hover:text-primary transition-colors">
-                    परिचय
+                  <a href="/donate" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                    Donate
                   </a>
                 </li>
               </ul>
@@ -48,11 +48,11 @@ const Footer = () => {
 
             {/* Contact */}
             <div>
-              <h4 className="font-bold font-devanagari text-foreground mb-4">संपर्क</h4>
-              <div className="space-y-2 text-sm font-devanagari text-muted-foreground">
-                <p>वैदिक विचार मंच</p>
-                <p>सिद्धि प्लाजा, बड़ीवान रोड</p>
-                <p>सिलीगुड़ी</p>
+              <h4 className="font-bold text-foreground mb-4">Contact</h4>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p>Arya Samaj</p>
+                <p>Siddhi Plaza, Bariwan Road</p>
+                <p>Siliguri, West Bengal</p>
               </div>
             </div>
           </div>
@@ -60,8 +60,8 @@ const Footer = () => {
           {/* Bottom Bar */}
           <div className="pt-8 border-t border-border">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-sm font-devanagari text-muted-foreground text-center md:text-left">
-                © 2025 वैदिक हवन पद्धति। सर्वाधिकार सुरक्षित।
+              <p className="text-sm text-muted-foreground text-center md:text-left">
+                © 2025 Arya Samaj. All rights reserved.
               </p>
               <div className="flex items-center gap-4">
                 <p className="text-sm font-sanskrit text-primary">

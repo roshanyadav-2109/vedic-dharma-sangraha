@@ -24,9 +24,9 @@ const Navbar = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold font-devanagari text-gradient">
-                  वैदिक हवन पद्धति
+                  आर्य समाज
                 </h1>
-                <p className="text-xs font-devanagari text-muted-foreground">सनातन धर्म की शाश्वत परंपरा</p>
+                <p className="text-xs text-muted-foreground">Eternal Tradition of Truth</p>
               </div>
             </a>
           </div>
@@ -42,15 +42,15 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <a href="#home" className="flex items-center space-x-3 group">
+          <a href="/" className="flex items-center space-x-3 group">
             <div className="w-12 h-12 rounded-full sacred-gradient flex items-center justify-center divine-glow">
               <span className="text-2xl font-bold text-primary-foreground">ॐ</span>
             </div>
             <div>
               <h1 className="text-2xl font-bold font-devanagari text-gradient">
-                वैदिक हवन पद्धति
+                आर्य समाज
               </h1>
-              <p className="text-xs font-devanagari text-muted-foreground">सनातन धर्म की शाश्वत परंपरा</p>
+              <p className="text-xs text-muted-foreground">Eternal Tradition of Truth</p>
             </div>
           </a>
 
