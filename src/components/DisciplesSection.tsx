@@ -1,12 +1,10 @@
-// src/components/DisciplesSection.tsx
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
-import { Carousel, TestimonialCard, iTestimonial } from "@/components/ui/TestimonialCarousel"; // Import new components
 
-// Define the Supabase Disciple type based on previous usage
-interface SupabaseDisciple {
+interface Disciple {
   id: number;
   name: string;
   description: string | null;
@@ -14,7 +12,6 @@ interface SupabaseDisciple {
 }
 
 const DisciplesSection = () => {
-  // Fetch data using useQuery
   const { data: disciples, isLoading, error } = useQuery({
     queryKey: ["disciples"],
     queryFn: async () => {
@@ -22,70 +19,70 @@ const DisciplesSection = () => {
         .from("disciples")
         .select("id, name, description, image_url")
         .order("name")
-        .limit(12); // Fetch up to 12 disciples
+        .limit(12);
 
-      if (error) {
-        console.error("Error fetching disciples:", error);
-        throw error; // Re-throw to let useQuery handle the error state
-      }
-      return data as SupabaseDisciple[];
+      if (error) throw error;
+      return data as Disciple[];
     },
-     staleTime: 1000 * 60 * 5, // Cache data for 5 minutes
   });
 
-  // Placeholder data in case of error or empty fetch
-  const placeholderDisciples: iTestimonial[] = [
-    { name: "Swami Shraddhanand", designation: "Pioneer of Education Reform", description: "A key figure in the Arya Samaj movement, known for establishing Gurukul Kangri University and his work in education and social reform.", profileImage: "https://source.unsplash.com/random/150x150?portrait,sage,man" },
-    { name: "Mahatma Hansraj", designation: "Founder of DAV Institutions", description: "An influential educator and follower of Dayanand Saraswati, instrumental in founding the Dayanand Anglo-Vedic (DAV) network of schools and colleges.", profileImage: "https://source.unsplash.com/random/150x150?portrait,educator,man" },
-    { name: "Lala Lajpat Rai", designation: "Freedom Fighter & Social Reformer", description: "A prominent leader in the Indian independence movement and an active member of Arya Samaj, advocating for social change and national education.", profileImage: "https://source.unsplash.com/random/150x150?portrait,leader,indian" },
-    { name: "Pandit Lekh Ram", designation: "Scholar & Religious Reformer", description: "A dedicated Arya Samaj missionary and writer, known for his defense of Vedic principles and critiques of other religious traditions.", profileImage: "https://source.unsplash.com/random/150x150?portrait,scholar,man" },
-    { name: "Swami Darshananand Saraswati", designation: "Vedic Scholar & Educator", description: "A notable scholar who contributed significantly to Vedic studies and the educational activities within the Arya Samaj.", profileImage: "https://source.unsplash.com/random/150x150?portrait,wise,man" },
-    { name: "Bhai Parmanand", designation: "Freedom Fighter & Writer", description: "An Indian nationalist and Arya Samaj member involved in the Ghadar Movement, known for his writings and efforts for India's independence.", profileImage: "https://source.unsplash.com/random/150x150?portrait,activist,man" },
+  const placeholderDisciples = [
+    { id: 1, name: "Swami Shraddhanand", description: "Pioneer of education reform", image_url: "https://placehold.co/300x400/ff9933/ffffff?text=Swami+Shraddhanand" },
+    { id: 2, name: "Mahatma Hansraj", description: "Founder of DAV institutions", image_url: "https://placehold.co/300x400/ff9933/ffffff?text=Mahatma+Hansraj" },
+    { id: 3, name: "Lala Lajpat Rai", description: "Freedom fighter and social reformer", image_url: "https://placehold.co/300x400/ff9933/ffffff?text=Lala+Lajpat+Rai" },
+    { id: 4, name: "Pandit Lekh Ram", description: "Scholar and religious reformer", image_url: "https://placehold.co/300x400/ff9933/ffffff?text=Pandit+Lekh+Ram" },
+    { id: 5, name: "Swami Dayanand", description: "Spiritual leader", image_url: "https://placehold.co/300x400/ff9933/ffffff?text=Swami+Dayanand" },
+    { id: 6, name: "Bhai Parmanand", description: "Freedom fighter", image_url: "https://placehold.co/300x400/ff9933/ffffff?text=Bhai+Parmanand" },
   ];
 
-  // Transform fetched data or use placeholders
-  const testimonialData: iTestimonial[] = error || !disciples || disciples.length === 0
-    ? placeholderDisciples
-    : disciples.map(d => ({
-        name: d.name,
-        // Use description as designation, or provide a default
-        designation: d.description ? (d.description.length > 50 ? d.description.substring(0, 47) + '...' : d.description) : 'Follower of Vedic Principles',
-        description: d.description || "A prominent disciple who carried forward the mission of Arya Samaj.", // Full description or default
-        profileImage: d.image_url || `https://source.unsplash.com/random/150x150?portrait,${d.name.split(' ')[0]}` // Use fetched image or generate placeholder
-      }));
-
-  // Create TestimonialCard elements
-  const testimonialCards = testimonialData.map((disciple, index) => (
-    <TestimonialCard
-      key={disciple.name + index} // Use name and index for key
-      discipleData={disciple} // Pass data using the correct prop name
-      index={index}
-      layout // Enable layout animation
-    />
-  ));
-
   return (
-    <section id="disciples" className="py-16 px-4 bg-muted/30 overflow-hidden"> {/* Added overflow-hidden */}
+    <section className="py-16 px-4 bg-muted/30">
       <div className="container mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-gradient"> {/* Reduced bottom margin */}
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 text-gradient">
           Prominent Disciples
         </h2>
 
-        {error && !isLoading && ( // Show error only if not loading and error exists
-          <div className="flex items-center justify-center gap-2 text-destructive my-6">
+        {error && (
+          <div className="flex items-center justify-center gap-2 text-destructive mb-6">
             <AlertCircle className="w-5 h-5" />
-            <span>Failed to load disciples. Displaying examples.</span>
+            <span>Failed to load disciples data. Displaying examples.</span>
           </div>
         )}
 
         {isLoading ? (
-          // Simple skeleton for loading state
-          <div className="flex justify-center mt-10">
-            <Skeleton className="h-[450px] w-80 rounded-3xl" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Card key={i} className="temple-shadow">
+                <Skeleton className="h-64 w-full rounded-t-lg" />
+                <CardContent className="p-4">
+                  <Skeleton className="h-6 w-full mb-2" />
+                  <Skeleton className="h-4 w-full" />
+                </CardContent>
+              </Card>
+            ))}
           </div>
         ) : (
-          // Render the Carousel with TestimonialCard items
-          <Carousel items={testimonialCards} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+            {(disciples && disciples.length > 0 ? disciples : placeholderDisciples).map((disciple) => (
+              <Card 
+                key={disciple.id} 
+                className="temple-shadow hover:divine-glow transition-all duration-300 overflow-hidden"
+              >
+                <img
+                  src={disciple.image_url || `https://placehold.co/300x400/ff9933/ffffff?text=${encodeURIComponent(disciple.name)}`}
+                  alt={disciple.name}
+                  className="w-full h-64 object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = `https://placehold.co/300x400/ff9933/ffffff?text=${encodeURIComponent(disciple.name)}`;
+                  }}
+                />
+                <CardContent className="p-4">
+                  <h3 className="font-semibold text-lg mb-1">{disciple.name}</h3>
+                  <p className="text-sm text-muted-foreground">{disciple.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         )}
       </div>
     </section>
