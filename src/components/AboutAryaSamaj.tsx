@@ -1,53 +1,53 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const AboutAryaSamaj = () => {
   return (
-    <section className="py-16 px-4 bg-muted/30">
+    <section className="w-full py-20 lg:py-40">
       <div className="container mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 text-gradient">
-          About Arya Samaj
-        </h2>
-        <div className="grid md:grid-cols-2 gap-8">
-          <Card className="temple-shadow">
-            <CardHeader>
-              <CardTitle className="text-2xl">Our Mission</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 text-muted-foreground leading-relaxed">
-              <p>
+        <div className="grid grid-cols-1 gap-8 items-center lg:grid-cols-2">
+          <div className="flex gap-4 flex-col">
+            <div>
+              <Badge variant="outline">Founded 1875</Badge>
+            </div>
+            <div className="flex gap-4 flex-col">
+              <h1 className="text-5xl md:text-7xl max-w-lg tracking-tighter text-left font-regular">
+                About Arya Samaj
+              </h1>
+              <p className="text-xl leading-relaxed tracking-tight text-muted-foreground max-w-md text-left">
                 Arya Samaj is a monotheistic Hindu reform movement founded by Maharshi Dayanand Saraswati in 1875. 
                 It emphasizes the infallible authority of the Vedas and promotes values of truth, righteousness, 
                 and social reform.
               </p>
-              <p>
+              <p className="text-xl leading-relaxed tracking-tight text-muted-foreground max-w-md text-left">
                 The organization works towards the physical, social, and spiritual uplift of humanity through 
                 Vedic principles and practices.
               </p>
-              <div className="mt-6">
-                <h3 className="text-xl font-semibold text-foreground mb-3">Organizational Structure</h3>
-                <ul className="space-y-2">
+              <div className="mt-4">
+                <h3 className="text-2xl font-semibold mb-3">Organizational Structure</h3>
+                <ul className="space-y-3">
                   <li className="flex items-start">
                     <span className="text-primary mr-2">•</span>
-                    <span><strong>Local Arya Samaj:</strong> Community-level organizations serving local populations</span>
+                    <span className="text-muted-foreground"><strong className="text-foreground">Local Arya Samaj:</strong> Community-level organizations serving local populations</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-primary mr-2">•</span>
-                    <span><strong>Provincial Arya Pratinidhi Sabha:</strong> State or regional coordinating bodies</span>
+                    <span className="text-muted-foreground"><strong className="text-foreground">Provincial Arya Pratinidhi Sabha:</strong> State or regional coordinating bodies</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-primary mr-2">•</span>
-                    <span><strong>Sarvadeshik Arya Pratinidhi Sabha:</strong> The apex body coordinating all activities</span>
+                    <span className="text-muted-foreground"><strong className="text-foreground">Sarvadeshik Arya Pratinidhi Sabha:</strong> The apex body coordinating all activities</span>
                   </li>
                 </ul>
               </div>
-            </CardContent>
-          </Card>
-          <div className="flex items-center justify-center">
+            </div>
+          </div>
+          <div className="bg-muted rounded-md aspect-square overflow-hidden">
             <img
-              src="https://placehold.co/600x400/ff9933/ffffff?text=Arya+Samaj+Activities"
+              src="https://placehold.co/600x600/ff9933/ffffff?text=Arya+Samaj+Activities"
               alt="Arya Samaj Activities"
-              className="rounded-lg temple-shadow w-full object-cover"
+              className="w-full h-full object-cover"
               onError={(e) => {
-                e.currentTarget.src = "https://placehold.co/600x400/ff9933/ffffff?text=Arya+Samaj";
+                e.currentTarget.src = "https://placehold.co/600x600/ff9933/ffffff?text=Arya+Samaj";
               }}
             />
           </div>
