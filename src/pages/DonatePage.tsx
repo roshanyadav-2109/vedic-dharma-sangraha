@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Heart } from "lucide-react";
-import heroImage from "@/assets/donation.jpg"; // Import the background image
+import heroImage from "@/assets/hero-temple.jpg";
 
 const DonatePage = () => {
   const [amount, setAmount] = useState("");
@@ -27,8 +27,6 @@ const DonatePage = () => {
     setIsProcessing(true);
 
     // TODO: Integrate with payment gateway
-    // After successful payment, call edge function to verify and store
-
     setTimeout(() => {
       toast.success("Thank you! Your donation has been received.");
       setIsProcessing(false);
@@ -41,20 +39,19 @@ const DonatePage = () => {
   const presetAmounts = [100, 500, 1000, 5000];
 
   return (
-    // Add relative positioning to the main container
     <div className="min-h-screen relative flex flex-col">
        {/* Background Image Div */}
         <div
-            className="absolute inset-0 z-0 bg-cover bg-center blur-sm" // Apply blur
+            className="absolute inset-0 z-0 bg-cover bg-center blur-sm"
             style={{ backgroundImage: `url(${heroImage})` }}
         />
         {/* Semi-transparent Overlay */}
-        <div className="absolute inset-0 z-0 bg-background/80 backdrop-blur-sm" /> {/* Adjust opacity (e.g., bg-background/80) */}
+        <div className="absolute inset-0 z-0 bg-background/80 backdrop-blur-sm" />
 
-      {/* Content needs to be relatively positioned and have a higher z-index */}
+      {/* Content Wrapper */}
       <div className="relative z-10 flex flex-col flex-grow">
         <Navbar />
-        <main className="flex-grow container mx-auto px-4 py-32"> {/* Added flex-grow */}
+        <main className="flex-grow container mx-auto px-4 py-32">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-12">
               <div className="inline-block p-6 rounded-full sacred-gradient divine-glow mb-4">
@@ -68,8 +65,7 @@ const DonatePage = () => {
               </p>
             </div>
 
-            {/* Make card slightly transparent to show background */}
-            <Card className="p-8 temple-shadow bg-card/90 backdrop-blur-xs"> {/* Adjusted card background opacity */}
+            <Card className="p-8 temple-shadow bg-card/90 backdrop-blur-xs">
               <form onSubmit={handleDonate} className="space-y-6">
                 <div>
                   <Label htmlFor="amount" className="text-lg mb-3 block">
@@ -82,22 +78,24 @@ const DonatePage = () => {
                         type="button"
                         variant={amount === preset.toString() ? "default" : "outline"}
                         onClick={() => setAmount(preset.toString())}
-                        className="bg-background/80 hover:bg-background" // Adjust button background for visibility
+                        // Removed bg-background/80 and hover:bg-background
                       >
                         ₹{preset}
                       </Button>
                     ))}
                   </div>
+                  {/* Kept background adjustment for Input for better visibility */}
                   <Input
                     id="amount"
                     type="number"
                     placeholder="Enter custom amount"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="bg-background/80" // Adjust input background
+                    className="bg-background/80"
                   />
                 </div>
 
+                {/* Name and Email Inputs (kept background adjustment) */}
                 <div>
                   <Label htmlFor="name" className="text-lg mb-2 block">
                     Full Name
@@ -111,7 +109,6 @@ const DonatePage = () => {
                     className="bg-background/80"
                   />
                 </div>
-
                 <div>
                   <Label htmlFor="email" className="text-lg mb-2 block">
                     Email Address
@@ -126,6 +123,7 @@ const DonatePage = () => {
                   />
                 </div>
 
+                {/* Donate Button */}
                 <Button
                   type="submit"
                   size="lg"
@@ -136,6 +134,7 @@ const DonatePage = () => {
                 </Button>
               </form>
 
+              {/* Footer Text */}
               <div className="mt-8 pt-6 border-t border-border">
                 <p className="text-sm text-muted-foreground text-center">
                   Your donation helps preserve and spread Vedic knowledge. Thank you for your support!
