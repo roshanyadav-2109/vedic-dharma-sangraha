@@ -1,18 +1,33 @@
+import React from 'react';
+import aryaSamajLogo from '@/assets/logo.png';
+
 const AryaSamajLogoSection = () => {
   return (
-    <section className="py-20 px-4">
-      <div className="container mx-auto text-center">
-        <div className="flex justify-center mb-8">
-          <div className="w-48 h-48 rounded-full sacred-gradient flex items-center justify-center shadow-2xl">
-            <span className="text-8xl text-white font-sanskrit">ॐ</span>
-          </div>
+    <section className="bg-gray-100 dark:bg-zinc-800 pt-28 pb-12 px-4">
+      <div className="container mx-auto">
+        <div className="flex items-center justify-around max-w-4xl mx-auto">
+          {/* Logo */}
+          <img
+            src={aryaSamajLogo}
+            alt="Arya Samaj Logo"
+            className="h-16 w-16 sm:h-24 sm:w-24"
+          />
+
+          {/* Title */}
+          <h1
+            className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-yellow-400 text-center px-4"
+            style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.7)" }}
+          >
+            <span className="font-devanagari">आर्य समाज</span> ARYA SAMAJ
+          </h1>
+
+          {/* Founder Image */}
+          <img
+            src="https://placehold.co/112x150/ff9933/ffffff?text=M.+Dayanand"
+            alt="Maharshi Dayanand Saraswati"
+            className="h-24 w-auto object-cover hidden sm:block"
+          />
         </div>
-        <h1 className="text-6xl md:text-7xl font-bold font-devanagari text-gradient mb-4">
-          आर्य समाज
-        </h1>
-        <h2 className="text-5xl md:text-6xl font-bold text-gradient">
-          Arya Samaj
-        </h2>
       </div>
     </section>
   );
