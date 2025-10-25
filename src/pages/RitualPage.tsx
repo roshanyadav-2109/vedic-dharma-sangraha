@@ -172,7 +172,7 @@ const RitualPage = () => {
                  <Button
                   size="lg"
                   className="sacred-gradient text-primary-foreground font-devanagari text-lg px-8 py-6 divine-glow hover:scale-105 transition-transform w-full sm:w-auto"
-                  onClick={() => window.open('/vedic-text.pdf', '_blank')}
+                  onClick={() => window.open('https://uhskuqmwuvpcgqljcdct.supabase.co/storage/v1/object/public/public_files/Arya%20Samaj%20Vidhi.pdf', '_blank')}
                 >
                   <Eye className="w-5 h-5 mr-2" />
                   PDF देखें
@@ -183,7 +183,7 @@ const RitualPage = () => {
                   className="font-devanagari text-lg px-8 py-6 border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all w-full sm:w-auto"
                   asChild // Use asChild to make the button act like a link for download
                 >
-                   <a href="/vedic-text.pdf" download="vedic-havan-paddhati.pdf"> {/* Add download attribute */}
+                   <a href="https://uhskuqmwuvpcgqljcdct.supabase.co/storage/v1/object/public/public_files/Arya%20Samaj%20Vidhi.pdf" download="vedic-havan-paddhati.pdf"> {/* Add download attribute */}
                     <Download className="w-5 h-5 mr-2" />
                     PDF डाउनलोड करें
                   </a>
