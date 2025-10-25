@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import dayanand from "assests/dayanand.jpeg";
+import dayanand from "assets/dayanand.jpeg";
 
 const FounderBiography = () => {
   return (
