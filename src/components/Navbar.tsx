@@ -21,10 +21,14 @@ import {
 } from "@/components/ui/sheet";
 import { useNavigation, buildMenuTree, NavItemWithChildren } from "@/hooks/useNavigation";
 import { cn } from "@/lib/utils";
+import { useLocation } from "react-router-dom"; // Import useLocation
+import aryaSamajLogo from '@/assets/logo.png'; // Import the logo
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: navigationItems, isLoading } = useNavigation();
+  const location = useLocation(); // Get location object
+  const isHomePage = location.pathname === '/'; // Check if it's the homepage
 
   const homeLink: NavItemWithChildren = {
     id: 0,
@@ -38,6 +42,7 @@ const Navbar = () => {
   const menuTree = buildMenuTree(navigationItems);
   const finalNavItems = [homeLink, ...menuTree];
 
+  // --- Helper Functions (renderNavMenuItems, renderNavMenuContentItems, renderMobileMenuItems) remain the same ---
   // --- Helper Function to Render Desktop Menu Items (Top Level) ---
   const renderNavMenuItems = (items: NavItemWithChildren[]) => {
     return items.map((item) => {
@@ -143,15 +148,21 @@ const Navbar = () => {
   if (isLoading) {
     return (
       <nav className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border temple-shadow h-16 flex items-center">
-        {/* Changed justify-between to justify-center */}
-        <div className="container mx-auto px-4 flex justify-center items-center relative">
-             <div className="flex items-center space-x-2">
+        {/* Adjusted loading state layout */}
+        <div className="container mx-auto px-4 flex justify-between items-center">
+             {/* Left side skeleton (logo placeholder) */}
+             {!isHomePage && <Skeleton className="h-10 w-24 md:w-40" />}
+             {isHomePage && <div className="w-10 md:w-40"></div>} {/* Spacer if on homepage */}
+
+             {/* Centered menu skeleton */}
+             <div className="hidden md:flex items-center space-x-2">
                 <Skeleton className="h-8 w-20" />
                 <Skeleton className="h-8 w-24" />
                 <Skeleton className="h-8 w-20" />
              </div>
-             {/* Position mobile skeleton absolutely */}
-             <Skeleton className="h-10 w-10 md:hidden absolute left-4 top-1/2 -translate-y-1/2" />
+
+              {/* Right side skeleton (mobile menu / mobile logo placeholder) */}
+             <Skeleton className="h-10 w-10" />
         </div>
       </nav>
     );
@@ -160,11 +171,21 @@ const Navbar = () => {
   // --- Render Component ---
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border temple-shadow h-16 flex items-center">
-      {/* Changed justify-between to justify-center */}
-      <div className="container mx-auto px-4 flex justify-center items-center relative">
+      {/* Changed container to justify-between */}
+      <div className="container mx-auto px-4 flex justify-between items-center relative">
 
-        {/* Desktop Navigation using NavigationMenu - Now centered */}
-        <div className="hidden md:flex">
+        {/* Logo (Left on Desktop, Hidden on Mobile & Homepage) */}
+        {!isHomePage && (
+          <a href="/" className="hidden md:block">
+            <img src={aryaSamajLogo} alt="Arya Samaj Logo" className="h-10 w-auto" /> {/* Adjust height as needed */}
+          </a>
+        )}
+        {/* Add a spacer div on desktop homepage to maintain balance */}
+        {isHomePage && <div className="hidden md:block w-40"></div>} {/* Adjust width to match logo approx */}
+
+
+        {/* Desktop Navigation Menu (Centered) */}
+        <div className="hidden md:flex flex-grow justify-center"> {/* Use flex-grow and justify-center here */}
           <NavigationMenu>
             <NavigationMenuList>
               {renderNavMenuItems(finalNavItems)}
@@ -172,8 +193,8 @@ const Navbar = () => {
           </NavigationMenu>
         </div>
 
-        {/* Mobile Menu Trigger using Sheet (Positioned absolutely) */}
-        <div className="md:hidden absolute left-4 top-1/2 -translate-y-1/2">
+        {/* Mobile Menu Trigger (Left on Mobile) */}
+        <div className="md:hidden">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -187,7 +208,15 @@ const Navbar = () => {
           </Sheet>
         </div>
 
-        {/* Removed the empty spacer div */}
+         {/* Logo (Right on Mobile, Hidden on Desktop & Homepage) */}
+         {!isHomePage && (
+           <a href="/" className="md:hidden">
+            <img src={aryaSamajLogo} alt="Arya Samaj Logo" className="h-8 w-auto" /> {/* Adjust height */}
+           </a>
+         )}
+         {/* Add a spacer div on mobile homepage */}
+         {isHomePage && <div className="md:hidden w-8 h-8"></div>} {/* Adjust size */}
+
 
       </div>
     </nav>
