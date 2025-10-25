@@ -63,10 +63,10 @@ const PDFSection = () => {
               </div>
 
               <div className="pt-4">
-                <Button 
+                <Button
                   size="lg"
                   className="sacred-gradient text-primary-foreground font-devanagari text-xl px-12 py-7 divine-glow hover:scale-105 transition-transform"
-                  onClick={() => window.open('/vedic-text.pdf', '_blank')}
+                  onClick={() => window.open('https://uhskuqmwuvpcgqljcdct.supabase.co/storage/v1/object/public/public_files/Arya%20Samaj%20Vidhi.pdf', '_blank')}
                 >
                   <Download className="w-6 h-6 mr-3" />
                   PDF डाउनलोड करें
