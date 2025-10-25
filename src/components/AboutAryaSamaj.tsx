@@ -11,10 +11,10 @@ const AboutAryaSamaj = () => {
             </div>
             <div className="flex gap-4 flex-col">
               <h1 className="text-5xl md:text-7xl max-w-lg tracking-tighter text-left font-regular">
-                About Arya Samaj
+                Arya Samaj
               </h1>
               <p className="text-xl leading-relaxed tracking-tight text-muted-foreground max-w-md text-left">
-                Arya Samaj is a monotheistic Hindu reform movement founded by Maharshi Dayanand Saraswati in 1875. 
+                is a monotheistic Hindu reform movement founded by Maharshi Dayanand Saraswati in 1875. 
                 It emphasizes the infallible authority of the Vedas and promotes values of truth, righteousness, 
                 and social reform.
               </p>
