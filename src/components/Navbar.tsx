@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigation, buildMenuStructure } from "@/hooks/useNavigation";
+import { useNavigation, buildMenuStructure, NavigationItem } from "@/hooks/useNavigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,22 +13,26 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: navigationItems, isLoading } = useNavigation();
 
+  const homeLink: NavigationItem = {
+    id: 0,
+    title: "Home",
+    link: "/",
+    parent_menu: null,
+    display_order: 0,
+  };
+
   if (isLoading || !navigationItems) {
+    // Skeleton loading state
     return (
       <nav className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border temple-shadow">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
-            <a href="/" className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-full sacred-gradient flex items-center justify-center divine-glow">
-                <span className="text-2xl font-bold text-primary-foreground">ॐ</span>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold font-devanagari text-gradient">
-                  आर्य समाज
-                </h1>
-                <p className="text-xs text-muted-foreground">Eternal Tradition of Truth</p>
-              </div>
-            </a>
+            <div>
+              <h1 className="text-2xl font-bold font-devanagari text-gradient">
+                आर्य समाज
+              </h1>
+              <p className="text-xs text-muted-foreground">Eternal Tradition of Truth</p>
+            </div>
           </div>
         </div>
       </nav>
@@ -36,16 +40,14 @@ const Navbar = () => {
   }
 
   const { topLevel, dropdowns } = buildMenuStructure(navigationItems);
+  const navLinks = [homeLink, ...topLevel];
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border temple-shadow">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
-          {/* Logo */}
+          {/* Title */}
           <a href="/" className="flex items-center space-x-3 group">
-            <div className="w-12 h-12 rounded-full sacred-gradient flex items-center justify-center divine-glow">
-              <span className="text-2xl font-bold text-primary-foreground">ॐ</span>
-            </div>
             <div>
               <h1 className="text-2xl font-bold font-devanagari text-gradient">
                 आर्य समाज
@@ -56,9 +58,9 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            {topLevel.map((item) => {
+            {navLinks.map((item) => {
               const hasDropdown = dropdowns[item.title];
-              
+
               if (hasDropdown) {
                 return (
                   <DropdownMenu key={item.id}>
@@ -113,9 +115,9 @@ const Navbar = () => {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="md:hidden py-4 space-y-2 border-t border-border">
-            {topLevel.map((item) => {
+            {navLinks.map((item) => {
               const hasDropdown = dropdowns[item.title];
-              
+
               return (
                 <div key={item.id}>
                   <a
