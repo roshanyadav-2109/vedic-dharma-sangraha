@@ -1,28 +1,28 @@
 // src/components/Navbar.tsx
 import { useState } from "react";
-import { Menu, X, ChevronDown, ChevronRight } from "lucide-react"; // Added ChevronRight
+import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
+// Import buttonVariants along with Button
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-// Updated imports from useNavigation hook
 import { useNavigation, buildMenuTree, NavItemWithChildren, NavigationItem } from "@/hooks/useNavigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuPortal, // Added Portal
-  DropdownMenuSub, // Added Sub
-  DropdownMenuSubContent, // Added SubContent
-  DropdownMenuSubTrigger, // Added SubTrigger
-  DropdownMenuSeparator, // Optional: Added Separator
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: navigationItems, isLoading } = useNavigation();
 
-  // Create Home Link Manually (as before)
+  // Create Home Link Manually
   const homeLink: NavItemWithChildren = {
     id: 0,
     title: "Home",
@@ -98,10 +98,9 @@ const Navbar = () => {
              <a
               key={item.id}
               href={item.link || "#"}
-              className={cn(
-                  "px-4 py-2 rounded-lg font-devanagari text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all duration-300 font-medium",
-                  // Add button styles for consistency if needed, e.g., using buttonVariants
-                 buttonVariants({ variant: "ghost", className: "justify-start" }) // Example styling
+              className={cn( // Use cn here
+                  // Combine base styles with button variant styles
+                  buttonVariants({ variant: "ghost", className: "justify-start font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 px-4 py-2 font-devanagari transition-all duration-300" })
               )}
             >
               {item.title}
@@ -143,7 +142,7 @@ const Navbar = () => {
 
   // --- Loading State ---
   if (isLoading) {
-    // Skeleton loading state (remains the same)
+    // Skeleton loading state
     return (
       <nav className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border temple-shadow">
         <div className="container mx-auto px-4">
@@ -160,6 +159,8 @@ const Navbar = () => {
                 <Skeleton className="h-8 w-24" />
                 <Skeleton className="h-8 w-20" />
              </div>
+             {/* Skeleton for Mobile Menu Button */}
+             <Skeleton className="h-10 w-10 md:hidden" />
           </div>
         </div>
       </nav>
@@ -171,7 +172,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border temple-shadow">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
-          {/* Title (remains the same) */}
+          {/* Title */}
           <a href="/" className="flex items-center space-x-3 group">
             <div>
               <h1 className="text-2xl font-bold font-devanagari text-gradient">
@@ -186,7 +187,7 @@ const Navbar = () => {
              {renderMenuItems(finalNavItems)}
           </div>
 
-          {/* Mobile Menu Button (remains the same) */}
+          {/* Mobile Menu Button */}
           <Button
             variant="ghost"
             size="icon"
