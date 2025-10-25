@@ -1,6 +1,7 @@
 // src/components/Navbar.tsx
 import { useState } from "react";
 import { Menu, X, ChevronDown, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 // Import buttonVariants along with Button
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
