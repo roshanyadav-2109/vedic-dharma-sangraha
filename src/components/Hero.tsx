@@ -6,7 +6,7 @@ const Hero = () => {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Background Image with Overlay */}
-      <div 
+      <div
         className="absolute inset-0 z-0"
         style={{
           backgroundImage: `url(${heroImage})`,
@@ -52,19 +52,19 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="sacred-gradient text-primary-foreground font-devanagari text-lg px-8 py-6 divine-glow hover:scale-105 transition-transform"
               onClick={() => document.getElementById('mantras')?.scrollIntoView({ behavior: 'smooth' })}
             >
               <BookOpen className="w-5 h-5 mr-2" />
               मंत्र देखें
             </Button>
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
               className="font-devanagari text-lg px-8 py-6 border-2 border-primary hover:bg-primary hover:text-primary-foreground transition-all"
-              onClick={() => window.open('/vedic-text.pdf', '_blank')}
+              onClick={() => window.open('https://uhskuqmwuvpcgqljcdct.supabase.co/storage/v1/object/public/public_files/Arya%20Samaj%20Vidhi.pdf', '_blank')}
             >
               <Download className="w-5 h-5 mr-2" />
               PDF डाउनलोड करें
