@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Heart } from "lucide-react";
-import heroImage from "@/assets/hero-temple.jpg"; // Import the background image
+import heroImage from "@/assets/donation.jpg"; // Import the background image
 
 const DonatePage = () => {
   const [amount, setAmount] = useState("");
