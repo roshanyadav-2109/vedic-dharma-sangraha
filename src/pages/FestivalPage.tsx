@@ -57,7 +57,7 @@ const FestivalPage = () => {
       <div className="container mx-auto px-4 py-32">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <span className="text-6xl mb-4 block">🎉</span>
+            {/* Removed Emoji Span */}
             <h1 className="text-4xl md:text-5xl font-bold font-devanagari text-gradient mb-4">
               {festival.title}
             </h1>
