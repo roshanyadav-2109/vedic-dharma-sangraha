@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Mantra } from "@/types/database";
-import { useParams, Link } from "react-router-dom"; // Added Link back
+import { useParams } from "react-router-dom"; // Keep useParams to read the category
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MantraCard from "@/components/MantraCard";
@@ -10,18 +10,21 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Eye } from "lucide-react";
-import { Badge } from "@/components/ui/badge"; // Import Badge for category links
+// Removed Badge and Link imports as category selection is no longer on this page
 
 const MantrasLibrary = () => {
-  const { category } = useParams<{ category?: string }>(); // Made category optional
+  // Get the category from the URL, if present
+  const { category } = useParams<{ category?: string }>();
+  // Decode the category name from the URL
+  const decodedCategory = category ? decodeURIComponent(category) : undefined;
 
-  // Fetch all mantras
+  // Fetch all mantras (filtering happens client-side after fetch)
   const { data: mantras, isLoading, isError } = useQuery({
-    queryKey: ["mantras"], // Keep fetching all initially
+    queryKey: ["mantras"], // Fetch all mantras
     queryFn: async () => {
       const { data, error } = await supabase
         .from("mantras")
-        .select("id, title, content, category") // Make sure category is selected
+        .select("id, title, content, category") // Ensure category is selected
         .order("id");
 
       if (error) {
@@ -33,71 +36,37 @@ const MantrasLibrary = () => {
      staleTime: 1000 * 60 * 5,
   });
 
-  // --- Re-added Filtering Logic ---
+  // --- Filter Mantras based on URL Category ---
   const filteredMantras = React.useMemo(() => {
     if (!mantras) return [];
     // If a category is specified in the URL, filter by it
-    if (category) {
-       // Decode URL component in case category names have spaces/special chars
-      const decodedCategory = decodeURIComponent(category);
+    if (decodedCategory) {
       return mantras.filter((m) => m.category === decodedCategory);
     }
-    // Otherwise (if no category in URL, i.e., /mantras), show all
-    return mantras;
-  }, [mantras, category]);
-
-  // Get unique categories for navigation links
-  const categories = React.useMemo(() => {
-     if (!mantras) return [];
-     // Use Set to get unique category names
-     return Array.from(new Set(mantras.map((m) => m.category).filter(Boolean))); // Filter out potential null/empty categories
-  }, [mantras]);
-
+    // Otherwise (if no category in URL, i.e., direct navigation to /mantras) show all
+    // Or you might want to redirect to a default category or show a message
+    return mantras; // Currently shows all if no category is specified
+  }, [mantras, decodedCategory]);
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-grow container mx-auto px-4 py-24 md:py-32">
         <div className="text-center mb-12">
+          {/* Main Title */}
           <h1 className="text-4xl md:text-5xl font-bold font-devanagari text-gradient mb-4">
-            मंत्र संग्रह
+             मंत्र संग्रह
           </h1>
-          <p className="text-lg font-devanagari text-muted-foreground max-w-2xl mx-auto">
+           {/* Dynamic Subtitle based on Category */}
+           <p className="text-2xl md:text-3xl font-devanagari text-primary mt-2">
+             {decodedCategory ? decodedCategory : "सभी मंत्र"} {/* Show category name or 'All Mantras' */}
+           </p>
+          <p className="text-lg font-devanagari text-muted-foreground max-w-2xl mx-auto mt-4">
             वैदिक परंपरा के अनुसार संस्कृत मंत्र। प्रत्येक मंत्र को कॉपी करने या सुनने के लिए बटन का उपयोग करें।
           </p>
         </div>
 
-        {/* Category Navigation Links (Replaces Tabs) */}
-        {!isLoading && !isError && categories.length > 0 && (
-           <div className="flex flex-wrap justify-center gap-2 mb-10 max-w-4xl mx-auto">
-              <Link to="/mantras">
-                 <Badge
-                    variant={!category ? "default" : "secondary"} // Highlight if no category selected
-                    className="font-devanagari text-sm cursor-pointer px-4 py-1.5"
-                 >
-                    सभी
-                 </Badge>
-              </Link>
-              {categories.map((cat) => (
-                // Encode category for URL safety
-                <Link key={cat} to={`/mantras/${encodeURIComponent(cat)}`}>
-                  <Badge
-                     variant={category === cat ? "default" : "secondary"} // Highlight if current category
-                     className="font-devanagari text-sm cursor-pointer px-4 py-1.5"
-                  >
-                     {cat}
-                  </Badge>
-                </Link>
-              ))}
-           </div>
-        )}
-
-
-        {/* Dynamic Title based on Category */}
-        <h2 className="text-2xl md:text-3xl font-bold font-devanagari text-center mb-8 text-primary">
-           {category ? decodeURIComponent(category) : "सभी मंत्र"}
-        </h2>
-
+        {/* Removed Category Navigation Links (Badges) */}
 
         {/* Loading State */}
         {isLoading && (
@@ -115,7 +84,7 @@ const MantrasLibrary = () => {
             </div>
         )}
 
-        {/* Mantra Grid - Now displays filteredMantras */}
+        {/* Mantra Grid - Displays filteredMantras */}
         {!isLoading && !isError && filteredMantras.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto mb-12">
             {filteredMantras.map((mantra) => (
@@ -131,7 +100,7 @@ const MantrasLibrary = () => {
          {/* No Mantras Found State */}
          {!isLoading && !isError && filteredMantras.length === 0 && (
              <div className="text-center text-muted-foreground font-devanagari p-8 mb-12">
-                 {category ? `श्रेणी '${decodeURIComponent(category)}' में कोई मंत्र नहीं मिला।` : "कोई मंत्र उपलब्ध नहीं है।"}
+                 {decodedCategory ? `श्रेणी '${decodedCategory}' में कोई मंत्र नहीं मिला।` : "कोई मंत्र उपलब्ध नहीं है।"}
              </div>
          )}
 
