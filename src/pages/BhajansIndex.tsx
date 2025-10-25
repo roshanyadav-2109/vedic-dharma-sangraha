@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Bhajan } from "@/types/database";
 import { Navbar } from "@/components/Navbar"; // Assuming Navbar export is default or named
-import { Footer } from "@/components/Footer"; // Assuming Footer export is default or named
+import Footer from "@/components/Footer"; // Correct: Default import (no curly braces) // Assuming Footer export is default or named
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, Music2, Loader2, Copy, Check } from "lucide-react"; // Added icons
