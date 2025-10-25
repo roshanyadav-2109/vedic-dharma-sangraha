@@ -2,10 +2,9 @@ import { Badge } from "@/components/ui/badge";
 
 const FounderBiography = () => {
   return (
-    // Keep the vertical padding, but adjust container padding below
     <section className="w-full py-20 lg:py-40 bg-muted/30">
-      {/* Reduced horizontal padding from px-4 to px-2 */}
-      <div className="container mx-auto px-2">
+      {/* Removed px-2 from the container div */}
+      <div className="container mx-auto">
         <div className="grid grid-cols-1 gap-8 items-center lg:grid-cols-2">
           {/* Image Section */}
           <div className="bg-muted rounded-md aspect-[4/5] overflow-hidden temple-shadow">
