@@ -1,3 +1,4 @@
+// src/App.tsx
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,9 +26,11 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/rituals/:slug" element={<RitualPage />} />
           <Route path="/bhajans" element={<BhajansIndex />} />
-          <Route path="/bhajans/:id" element={<BhajanDetail />} />
+          {/* Keep this route ONLY if you need direct links like /bhajans/123 to work */}
+          {/* Otherwise, remove it */}
+          {/* <Route path="/bhajans/:id" element={<BhajanDetail />} /> */}
           <Route path="/festivals/:slug" element={<FestivalPage />} />
-          
+
           {/* UPDATED ROUTES FOR MANTRAS */}
           <Route path="/mantras" element={<MantrasLibrary />} />
           <Route path="/mantras/:category" element={<MantrasLibrary />} />
