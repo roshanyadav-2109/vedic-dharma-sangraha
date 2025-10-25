@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import dayanand from "assests/dayanand.jpeg";
 
 const FounderBiography = () => {
   return (
@@ -8,7 +9,7 @@ const FounderBiography = () => {
           {/* Image Section */}
           <div className="bg-muted rounded-md aspect-[4/5] overflow-hidden temple-shadow">
             <img
-              src="/assets/dayanand.jpeg"
+              src= {dayanand}
               alt="Maharshi Dayanand Saraswati"
               className="w-full h-full object-cover"
             />
