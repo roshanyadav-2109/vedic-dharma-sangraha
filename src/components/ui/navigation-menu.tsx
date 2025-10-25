@@ -1,6 +1,6 @@
 // src/components/ui/navigation-menu.tsx
 import * as React from "react"
-import { ChevronDownIcon } from "@radix-ui/react-icons" // Using radix icon as provided
+import { ChevronDown } from "lucide-react"; // Import from lucide-react instead
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
 
