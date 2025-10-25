@@ -22,7 +22,7 @@ import {
 import { useNavigation, buildMenuTree, NavItemWithChildren } from "@/hooks/useNavigation";
 import { cn } from "@/lib/utils";
 import { useLocation } from "react-router-dom"; // Import useLocation
-import aryaSamajLogo from '@/assets/logo.png'; // Import the logo
+import aryaSamajLogo from '@/assets/aryasamaj.png'; // Import the logo
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
