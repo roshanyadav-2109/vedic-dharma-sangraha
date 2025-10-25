@@ -8,7 +8,7 @@ const FounderBiography = () => {
           {/* Image Section */}
           <div className="bg-muted rounded-md aspect-[4/5] overflow-hidden temple-shadow">
             <img
-              src="https://source.unsplash.com/random/500x600?portrait,hindu,sage"
+              src="/assets/dayanand.jpeg"
               alt="Maharshi Dayanand Saraswati"
               className="w-full h-full object-cover"
             />
