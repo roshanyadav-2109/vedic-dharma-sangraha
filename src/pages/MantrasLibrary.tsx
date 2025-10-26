@@ -1,26 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Mantra } from "@/types/database";
-import { useParams } from "react-router-dom"; // Keep useParams to read the category
+import { useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import MantraCard from "@/components/MantraCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Eye } from "lucide-react";
-// Removed Badge and Link imports as category selection is no longer on this page
+import { Download, Eye, Volume2, VolumeX, Copy, Check } from "lucide-react";
+import { toast } from "sonner";
 
 const MantrasLibrary = () => {
-  // Get the category from the URL, if present
   const { category } = useParams<{ category?: string }>();
-  // Decode the category name from the URL
   const decodedCategory = category ? decodeURIComponent(category) : undefined;
 
-  // Fetch all mantras (filtering happens client-side after fetch)
+  const [speakingMantraId, setSpeakingMantraId] = useState<number | null>(null);
+  const [copiedMantraId, setCopiedMantraId] = useState<number | null>(null);
+
   const { data: mantras, isLoading, isError } = useQuery({
-    queryKey: ["mantras"], // Fetch all mantras
+    queryKey: ["mantras"],
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from("mantras")
@@ -36,17 +35,53 @@ const MantrasLibrary = () => {
      staleTime: 1000 * 60 * 5,
   });
 
-  // --- Filter Mantras based on URL Category ---
   const filteredMantras = React.useMemo(() => {
     if (!mantras) return [];
-    // If a category is specified in the URL, filter by it
     if (decodedCategory) {
       return mantras.filter((m) => m.category === decodedCategory);
     }
-    // Otherwise (if no category in URL, i.e., direct navigation to /mantras) show all
-    // Or you might want to redirect to a default category or show a message
-    return mantras; // Currently shows all if no category is specified
+    return mantras;
   }, [mantras, decodedCategory]);
+
+  const handleRecite = (mantraText: string, mantraId: number) => {
+    if (speakingMantraId === mantraId) {
+      window.speechSynthesis.cancel();
+      setSpeakingMantraId(null);
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(mantraText);
+    utterance.lang = 'hi-IN';
+    utterance.rate = 0.8;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => {
+      setSpeakingMantraId(mantraId);
+      toast.success("मंत्र उच्चारण शुरू");
+    };
+
+    utterance.onend = () => {
+      setSpeakingMantraId(null);
+    };
+
+    utterance.onerror = () => {
+      setSpeakingMantraId(null);
+      toast.error("उच्चारण में त्रुटि");
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handleCopy = async (mantraText: string, mantraId: number) => {
+    try {
+      await navigator.clipboard.writeText(mantraText);
+      setCopiedMantraId(mantraId);
+      toast.success("मंत्र कॉपी हो गया!");
+      setTimeout(() => setCopiedMantraId(null), 2000);
+    } catch (err) {
+      toast.error("कॉपी करने में त्रुटि");
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -68,13 +103,11 @@ const MantrasLibrary = () => {
           </div>
         </div>
 
-        {/* Removed Category Navigation Links (Badges) */}
-
         {/* Loading State */}
         {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto mb-12">
+          <div className="max-w-5xl mx-auto mb-12 space-y-6">
             {[...Array(6)].map((_, i) => (
-              <Skeleton key={i} className="h-48 w-full rounded-lg" />
+              <Skeleton key={i} className="h-32 w-full rounded-lg" />
             ))}
           </div>
         )}
@@ -86,17 +119,65 @@ const MantrasLibrary = () => {
             </div>
         )}
 
-        {/* Mantra Grid - Displays filteredMantras */}
+        {/* Mantra Document Flow */}
         {!isLoading && !isError && filteredMantras.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto mb-16">
-            {filteredMantras.map((mantra) => (
-              <MantraCard
-                key={mantra.id}
-                title={mantra.title}
-                mantra={mantra.content || ""}
-              />
-            ))}
-          </div>
+          <Card className="max-w-5xl mx-auto mb-16 p-8 md:p-12 temple-shadow bg-card/50 backdrop-blur-sm">
+            <CardContent className="p-0 space-y-10">
+              {filteredMantras.map((mantra) => (
+                <div 
+                  key={mantra.id} 
+                  className="group relative py-8 border-b border-primary/10 last:border-b-0"
+                >
+                  <div className="absolute top-4 right-0 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Button
+                      onClick={() => handleRecite(mantra.content || "", mantra.id)}
+                      size="sm"
+                      variant="outline"
+                      className="font-devanagari hover:bg-primary hover:text-primary-foreground transition-all border-2"
+                    >
+                      {speakingMantraId === mantra.id ? (
+                        <>
+                          <VolumeX className="w-4 h-4 mr-1" />
+                          रोकें
+                        </>
+                      ) : (
+                        <>
+                          <Volume2 className="w-4 h-4 mr-1" />
+                          सुनें
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => handleCopy(mantra.content || "", mantra.id)}
+                      size="sm"
+                      variant="outline"
+                      className="font-devanagari hover:bg-primary hover:text-primary-foreground transition-all border-2"
+                    >
+                      {copiedMantraId === mantra.id ? (
+                        <>
+                          <Check className="w-4 h-4 mr-1" />
+                          कॉपी हुआ
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4 mr-1" />
+                          कॉपी
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  
+                  <h3 className="text-2xl font-bold font-devanagari text-primary mb-6">
+                    {mantra.title}
+                  </h3>
+                  
+                  <p className="font-sanskrit text-3xl leading-loose text-foreground select-all pr-32">
+                    {mantra.content}
+                  </p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         )}
 
          {/* No Mantras Found State */}

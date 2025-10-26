@@ -7,9 +7,9 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Download, Eye } from "lucide-react";
-import { Fragment } from "react";
-import MantraCard from "@/components/MantraCard";
+import { Download, Eye, Volume2, VolumeX, Copy, Check } from "lucide-react";
+import { Fragment, useState } from "react";
+import { toast } from "sonner";
 
 // Helper type for a single content item
 type ContentItem = {
@@ -21,76 +21,154 @@ type ContentItem = {
 
 const RitualPage = () => {
   const { slug } = useParams<{ slug: string }>();
+  const [speakingMantraIndex, setSpeakingMantraIndex] = useState<number | null>(null);
+  const [copiedMantraIndex, setCopiedMantraIndex] = useState<number | null>(null);
 
-  const { data: ritual, isLoading, isError } = useQuery({ // Added isError
+  const { data: ritual, isLoading, isError } = useQuery({
     queryKey: ["ritual", slug],
     queryFn: async () => {
-      // Fetching data from Supabase rituals table
       const { data, error } = await (supabase as any)
         .from("rituals")
-        .select("id, title, content_json, slug") // Ensure necessary fields are selected
+        .select("id, title, content_json, slug")
         .eq("slug", slug)
         .single();
 
       if (error) {
          console.error("Supabase error fetching ritual:", error);
-         throw error; // Let react-query handle the error state
+         throw error;
         }
       if (!data) {
-        throw new Error("Ritual not found"); // Handle case where data is null but no error
+        throw new Error("Ritual not found");
       }
       return data as Ritual;
     },
-     retry: 1, // Retry once on error
+     retry: 1,
   });
 
-  // Updated render function with MantraCard integration
+  const handleRecite = (mantraText: string, index: number) => {
+    if (speakingMantraIndex === index) {
+      window.speechSynthesis.cancel();
+      setSpeakingMantraIndex(null);
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(mantraText);
+    utterance.lang = 'hi-IN';
+    utterance.rate = 0.8;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => {
+      setSpeakingMantraIndex(index);
+      toast.success("मंत्र उच्चारण शुरू");
+    };
+
+    utterance.onend = () => {
+      setSpeakingMantraIndex(null);
+    };
+
+    utterance.onerror = () => {
+      setSpeakingMantraIndex(null);
+      toast.error("उच्चारण में त्रुटि");
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handleCopy = async (mantraText: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(mantraText);
+      setCopiedMantraIndex(index);
+      toast.success("मंत्र कॉपी हो गया!");
+      setTimeout(() => setCopiedMantraIndex(null), 2000);
+    } catch (err) {
+      toast.error("कॉपी करने में त्रुटि");
+    }
+  };
+
   const renderContent = (contentJson: any) => {
-    // Check if the content is a valid array
     if (!Array.isArray(contentJson)) {
       return <p className="font-devanagari text-destructive text-center">Invalid content format received from backend.</p>;
     }
 
-    // Track the last subheading to use as mantra title
-    let lastSubheading = "";
+    let mantraCounter = 0;
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-8 prose prose-lg max-w-none">
         {(contentJson as ContentItem[]).map((item, index) => {
-          // Update lastSubheading when we encounter a subheading
-          if (item.type === 'subheading') {
-            lastSubheading = item.content;
-          }
-
+          const currentMantraIndex = item.type === 'mantra' ? mantraCounter++ : -1;
+          
           return (
             <Fragment key={index}>
               {item.type === 'heading' && (
-                <h2 className="text-3xl font-bold font-devanagari text-gradient border-b-2 border-primary/20 pb-2 mb-6">
+                <h2 className="text-4xl font-bold font-devanagari text-gradient border-b-2 border-primary/30 pb-4 mb-8 mt-12">
                   {item.content}
                 </h2>
               )}
               {item.type === 'subheading' && (
-                <h3 className="text-2xl font-semibold font-devanagari text-primary pt-4 mt-4">
+                <h3 className="text-3xl font-semibold font-devanagari text-primary pt-6 mt-8 mb-4">
                   {item.content}
                 </h3>
               )}
               {item.type === 'instruction' && (
-                <p className="font-devanagari text-muted-foreground italic bg-muted/30 p-4 rounded-md border-l-4 border-secondary my-4">
-                  {item.content}
-                </p>
+                <div className="bg-secondary/10 border-l-4 border-secondary p-6 rounded-r-lg my-6">
+                  <p className="font-devanagari text-foreground/80 italic leading-relaxed text-lg">
+                    {item.content}
+                  </p>
+                </div>
               )}
               {item.type === 'mantra' && (
-                <div className="my-6">
-                  <MantraCard
-                    title={lastSubheading || "मंत्र"}
-                    mantra={item.content}
-                    meaning={item.purpose}
-                  />
+                <div className="group relative my-8 py-6 px-8 bg-gradient-to-br from-primary/5 to-transparent rounded-lg border border-primary/10 hover:border-primary/30 transition-all duration-300">
+                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Button
+                      onClick={() => handleRecite(item.content, currentMantraIndex)}
+                      size="sm"
+                      variant="outline"
+                      className="font-devanagari hover:bg-primary hover:text-primary-foreground transition-all border-2"
+                    >
+                      {speakingMantraIndex === currentMantraIndex ? (
+                        <>
+                          <VolumeX className="w-4 h-4 mr-1" />
+                          रोकें
+                        </>
+                      ) : (
+                        <>
+                          <Volume2 className="w-4 h-4 mr-1" />
+                          सुनें
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => handleCopy(item.content, currentMantraIndex)}
+                      size="sm"
+                      variant="outline"
+                      className="font-devanagari hover:bg-primary hover:text-primary-foreground transition-all border-2"
+                    >
+                      {copiedMantraIndex === currentMantraIndex ? (
+                        <>
+                          <Check className="w-4 h-4 mr-1" />
+                          कॉपी हुआ
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4 mr-1" />
+                          कॉपी
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  <p className="font-sanskrit text-3xl leading-loose text-foreground select-all pr-32">
+                    {item.content}
+                  </p>
+                  {item.purpose && (
+                    <p className="text-sm font-devanagari text-muted-foreground mt-4 italic">
+                      ({item.purpose})
+                    </p>
+                  )}
                 </div>
               )}
               {item.type === 'translation' && (
-                <div className="border-l-4 border-muted pl-4 my-4">
-                  <p className="font-devanagari text-foreground/80 leading-relaxed whitespace-pre-wrap italic">
+                <div className="border-l-4 border-muted/50 pl-6 my-6">
+                  <p className="font-devanagari text-foreground/70 leading-relaxed italic text-lg">
                     {item.content}
                   </p>
                 </div>
@@ -165,8 +243,8 @@ const RitualPage = () => {
           </Card>
 
           {/* Content Section */}
-          <Card className="p-6 md:p-10 temple-shadow">
-            <CardContent>
+          <Card className="p-8 md:p-12 temple-shadow bg-card/50 backdrop-blur-sm">
+            <CardContent className="p-0">
              {renderContent(ritual.content_json)}
             </CardContent>
           </Card>

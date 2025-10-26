@@ -40,13 +40,12 @@ const DonatePage = () => {
 
   return (
     <div className="min-h-screen relative flex flex-col">
-       {/* Background Image Div */}
+       {/* Background Image with Overlay */}
         <div
-            className="absolute inset-0 z-0 bg-cover bg-center blur-sm"
+            className="fixed inset-0 z-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${heroImage})` }}
         />
-        {/* Semi-transparent Overlay */}
-        <div className="absolute inset-0 z-0 bg-background/80 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-0 bg-background/85 backdrop-blur-md" />
 
       {/* Content Wrapper */}
       <div className="relative z-10 flex flex-col flex-grow">
@@ -65,7 +64,7 @@ const DonatePage = () => {
               </p>
             </div>
 
-            <Card className="p-8 temple-shadow bg-card/90 backdrop-blur-xs">
+            <Card className="p-8 md:p-10 temple-shadow bg-card/95 backdrop-blur-md border-2 border-primary/20">
               <form onSubmit={handleDonate} className="space-y-6">
                 <div>
                   <Label htmlFor="amount" className="text-lg mb-3 block">
