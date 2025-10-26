@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Ritual } from "@/types/database";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Added CardHeader, CardTitle, CardContent
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button"; // Added Button import
-import { Download, Eye } from "lucide-react"; // Added icons
+import { Button } from "@/components/ui/button";
+import { Download, Eye } from "lucide-react";
 import { Fragment } from "react";
+import MantraCard from "@/components/MantraCard";
 
 // Helper type for a single content item
 type ContentItem = {
@@ -43,51 +44,60 @@ const RitualPage = () => {
      retry: 1, // Retry once on error
   });
 
-  // Updated render function with improved styling
+  // Updated render function with MantraCard integration
   const renderContent = (contentJson: any) => {
     // Check if the content is a valid array
     if (!Array.isArray(contentJson)) {
       return <p className="font-devanagari text-destructive text-center">Invalid content format received from backend.</p>;
     }
 
+    // Track the last subheading to use as mantra title
+    let lastSubheading = "";
+
     return (
       <div className="space-y-6">
-        {(contentJson as ContentItem[]).map((item, index) => (
-          <Fragment key={index}>
-            {item.type === 'heading' && (
-              <h2 className="text-3xl font-bold font-devanagari text-gradient border-b-2 border-primary/20 pb-2 mb-6">
-                {item.content}
-              </h2>
-            )}
-            {item.type === 'subheading' && (
-              <h3 className="text-2xl font-semibold font-devanagari text-primary pt-4 mt-4"> {/* Adjusted font weight */}
-                {item.content}
-              </h3>
-            )}
-            {item.type === 'instruction' && (
-              <p className="font-devanagari text-muted-foreground italic bg-muted/30 p-4 rounded-md border-l-4 border-secondary my-4"> {/* Adjusted styling */}
-                {item.content}
-              </p>
-            )}
-            {item.type === 'mantra' && (
-              <div className="font-sanskrit text-xl md:text-2xl leading-relaxed whitespace-pre-wrap my-4 p-4 bg-background rounded"> {/* Adjusted font size and added background */}
-                <p className="select-all">{item.content}</p>
-                {item.purpose && (
-                  <p className="text-sm font-devanagari text-muted-foreground mt-2">
-                    ({item.purpose})
-                  </p>
-                )}
-              </div>
-            )}
-             {item.type === 'translation' && (
-                <div className="border-l-4 border-muted pl-4 my-4">
-                    <p className="font-devanagari text-foreground/80 leading-relaxed whitespace-pre-wrap italic">
-                        {item.content}
-                    </p>
+        {(contentJson as ContentItem[]).map((item, index) => {
+          // Update lastSubheading when we encounter a subheading
+          if (item.type === 'subheading') {
+            lastSubheading = item.content;
+          }
+
+          return (
+            <Fragment key={index}>
+              {item.type === 'heading' && (
+                <h2 className="text-3xl font-bold font-devanagari text-gradient border-b-2 border-primary/20 pb-2 mb-6">
+                  {item.content}
+                </h2>
+              )}
+              {item.type === 'subheading' && (
+                <h3 className="text-2xl font-semibold font-devanagari text-primary pt-4 mt-4">
+                  {item.content}
+                </h3>
+              )}
+              {item.type === 'instruction' && (
+                <p className="font-devanagari text-muted-foreground italic bg-muted/30 p-4 rounded-md border-l-4 border-secondary my-4">
+                  {item.content}
+                </p>
+              )}
+              {item.type === 'mantra' && (
+                <div className="my-6">
+                  <MantraCard
+                    title={lastSubheading || "मंत्र"}
+                    mantra={item.content}
+                    meaning={item.purpose}
+                  />
                 </div>
-            )}
-          </Fragment>
-        ))}
+              )}
+              {item.type === 'translation' && (
+                <div className="border-l-4 border-muted pl-4 my-4">
+                  <p className="font-devanagari text-foreground/80 leading-relaxed whitespace-pre-wrap italic">
+                    {item.content}
+                  </p>
+                </div>
+              )}
+            </Fragment>
+          );
+        })}
       </div>
     );
   };

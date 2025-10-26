@@ -37,7 +37,7 @@ const BhajansIndex = () => {
   const { data: allBhajans, isLoading: isLoadingList } = useQuery({
     queryKey: ["bhajansList"],
     queryFn: async (): Promise<BhajanListItem[]> => {
-      const { data, error } = await supabase.from("bhajans").select("id, title").order("id");
+      const { data, error } = await (supabase as any).from("bhajans").select("id, title").order("id");
       if (error) { console.error("Error fetching bhajan list:", error); throw new Error("Could not fetch bhajan list"); }
       return data || [];
     },
@@ -48,7 +48,7 @@ const BhajansIndex = () => {
     queryKey: ["bhajanDetail", selectedBhajanId],
     queryFn: async (): Promise<Bhajan | null> => {
       if (!selectedBhajanId) return null;
-      const { data, error } = await supabase.from("bhajans").select("id, title, lyrics").eq("id", selectedBhajanId).single();
+      const { data, error } = await (supabase as any).from("bhajans").select("id, title, lyrics").eq("id", selectedBhajanId).single();
       if (error) { console.error("Error fetching bhajan detail:", error); toast.error(`Failed to load Bhajan: ${error.message}`); setSelectedBhajanId(null); throw new Error("Could not fetch bhajan details"); }
       return data || null;
     },

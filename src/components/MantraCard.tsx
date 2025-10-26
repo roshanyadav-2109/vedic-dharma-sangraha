@@ -55,42 +55,42 @@ const MantraCard = ({ title, mantra, meaning }: MantraCardProps) => {
   };
 
   return (
-    <Card className="p-6 temple-shadow hover:divine-glow transition-all duration-500 border-2 border-border/50 hover:border-primary/30 bg-card">
-      <div className="flex justify-between items-start gap-4 mb-4">
-        <h3 className="text-xl font-bold font-devanagari text-primary">{title}</h3>
-        <div className="flex gap-2 shrink-0">
+    <Card className="group p-8 temple-shadow hover:divine-glow transition-all duration-500 border-2 border-border/50 hover:border-primary/40 bg-gradient-to-br from-card via-card to-primary/5 hover:shadow-2xl">
+      <div className="flex justify-between items-start gap-6 mb-6">
+        <h3 className="text-2xl font-bold font-devanagari text-gradient leading-tight">{title}</h3>
+        <div className="flex gap-3 shrink-0">
           <Button
             onClick={handleRecite}
-            size="sm"
+            size="lg"
             variant="outline"
-            className="hover:bg-primary hover:text-primary-foreground transition-colors"
+            className="font-devanagari hover:bg-primary hover:text-primary-foreground transition-all hover:scale-105 border-2"
           >
             {isSpeaking ? (
               <>
-                <VolumeX className="w-4 h-4 mr-1" />
+                <VolumeX className="w-5 h-5 mr-2" />
                 रोकें
               </>
             ) : (
               <>
-                <Volume2 className="w-4 h-4 mr-1" />
+                <Volume2 className="w-5 h-5 mr-2" />
                 सुनें
               </>
             )}
           </Button>
           <Button
             onClick={handleCopy}
-            size="sm"
+            size="lg"
             variant="outline"
-            className="hover:bg-primary hover:text-primary-foreground transition-colors"
+            className="font-devanagari hover:bg-primary hover:text-primary-foreground transition-all hover:scale-105 border-2"
           >
             {copied ? (
               <>
-                <Check className="w-4 h-4 mr-1" />
+                <Check className="w-5 h-5 mr-2" />
                 कॉपी हुआ
               </>
             ) : (
               <>
-                <Copy className="w-4 h-4 mr-1" />
+                <Copy className="w-5 h-5 mr-2" />
                 कॉपी
               </>
             )}
@@ -98,14 +98,16 @@ const MantraCard = ({ title, mantra, meaning }: MantraCardProps) => {
         </div>
       </div>
       
-      <div className="space-y-4">
-        <p className="text-2xl leading-relaxed font-sanskrit text-foreground/90 select-all">
-          {mantra}
-        </p>
+      <div className="space-y-6">
+        <div className="bg-background/50 backdrop-blur-sm rounded-lg p-6 border border-primary/10">
+          <p className="text-3xl md:text-4xl leading-loose font-sanskrit text-foreground select-all tracking-wide">
+            {mantra}
+          </p>
+        </div>
         
         {meaning && (
-          <div className="pt-4 border-t border-border/50">
-            <p className="text-sm font-devanagari text-muted-foreground italic">
+          <div className="pt-6 border-t-2 border-primary/20">
+            <p className="text-base font-devanagari text-muted-foreground italic leading-relaxed">
               {meaning}
             </p>
           </div>
