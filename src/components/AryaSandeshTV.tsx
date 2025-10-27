@@ -2,8 +2,8 @@ import { Card } from "@/components/ui/card";
 import { Youtube } from "lucide-react";
 
 const AryaSandeshTV = () => {
-  // Replace "5_s_n4-4_Zk" with your desired YouTube video ID
-  const videoId = "5_s_n4-4_Zk";
+  // Updated YouTube video ID
+  const videoId = "fcR4Vq0a8Zs";
 
   return (
     <section id="arya-sandesh-tv" className="py-16 px-4 bg-muted/30">
