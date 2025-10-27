@@ -9,6 +9,7 @@ import SocialHumanitarianEfforts from "@/components/SocialHumanitarianEfforts";
 import EventsNews from "@/components/EventsNews";
 import PhotoVideoGallery from "@/components/ui/PhotoVideoGallery";
 import GlobalPresence from "@/components/GlobalPresence";
+import AryaSandeshTV from "@/components/AryaSandeshTV";
 
 const Index = () => {
   return (
@@ -24,7 +25,7 @@ const Index = () => {
         <EventsNews />
         <PhotoVideoGallery />
         <GlobalPresence />
-        {/* Removed old sections: Hero, MantrasSection, HavanSection, AboutSection (old), PDFSection */}
+        <AryaSandeshTV />
       </main>
       <Footer />
     </div>
