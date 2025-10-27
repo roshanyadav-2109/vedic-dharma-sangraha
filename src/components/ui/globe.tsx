@@ -8,23 +8,23 @@ import { geoGraticule10, geoOrthographic, geoPath } from "d3-geo";
 
 const Dots = () => {
   const graticule = geoGraticule10();
-  const sphere = { type: "Sphere" as const };
-  const projection = geoOrthographic().fitSize([2, 2], sphere);
-
-  // Correctly generate the line strings
-  const lineStrings = graticule.lines;
+  const projection = geoOrthographic().fitSize([2, 2], { type: "Sphere" });
   const dots: THREE.Vector3[] = [];
 
-  lineStrings.forEach((ls) => {
-    if (ls && ls.coordinates && ls.coordinates.length > 0) {
-      ls.coordinates.forEach((c) => {
-        const [x, y, z] = projection(c as [number, number]) || [0, 0, 0];
-        if (x !== 0 || y !== 0 || z !== 0) {
-            dots.push(new THREE.Vector3(x, y, z));
-        }
-      });
-    }
-  });
+  // geoGraticule10() returns a MultiLineString GeoJSON object
+  if (graticule.coordinates && Array.isArray(graticule.coordinates)) {
+    graticule.coordinates.forEach((lineString: any) => {
+      if (Array.isArray(lineString)) {
+        lineString.forEach((coord: [number, number]) => {
+          const projected = projection(coord);
+          if (projected) {
+            const [x, y] = projected;
+            dots.push(new THREE.Vector3(x, y, 0));
+          }
+        });
+      }
+    });
+  }
 
   return (
     <points>
