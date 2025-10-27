@@ -1,85 +1,57 @@
-// src/components/GlobalPresence.tsx
-"use client";
-import React from "react";
-import { motion } from "framer-motion";
-import { Globe } from "@/components/ui/globe";
-import { useTemples } from "@/hooks/useTemples";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Globe } from "lucide-react";
 
-export const GlobalPresence = () => {
-  const { data: temples, isLoading } = useTemples();
-
-  const globeConfig = {
-    pointSize: 4,
-    globeColor: "#1d4ed8",
-    showAtmosphere: true,
-    atmosphereColor: "#ffffff",
-    atmosphereAltitude: 0.1,
-    emissive: "#000000",
-    emissiveIntensity: 0.1,
-    shininess: 0.9,
-    polygonColor: "rgba(255,255,255,0.7)",
-    ambientLight: "#38bdf8",
-    directionalLeftLight: "#ffffff",
-    directionalTopLight: "#ffffff",
-    pointLight: "#ffffff",
-    arcTime: 1000,
-    arcLength: 0.9,
-    rings: 1,
-    maxRings: 3,
-    initialPosition: { lat: 28.6139, lng: 77.209 },
-    autoRotate: true,
-    autoRotateSpeed: 0.5,
-  };
-
-  const sampleArcs = temples?.map((temple, index) => ({
-    order: index,
-    startLat: temple.latitude,
-    startLng: temple.longitude,
-    endLat: 28.6139, // Delhi, for example
-    endLng: 77.209,
-    arcAlt: Math.random() * 0.5 + 0.1,
-    color: ["#06b6d4", "#3b82f6", "#6366f1"][index % 3],
-  }));
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-row items-center justify-center py-20 h-screen md:h-[40rem] bg-background relative w-full">
-        <Skeleton className="w-full h-full" />
-      </div>
-    );
-  }
+const GlobalPresence = () => {
+  const countries = [
+    "India", "United States", "Canada", "United Kingdom", "Australia", 
+    "South Africa", "Kenya", "Trinidad and Tobago", "Guyana", "Suriname",
+    "Mauritius", "Fiji", "Singapore", "Malaysia", "Thailand"
+  ];
 
   return (
-    <div className="flex flex-row items-center justify-center py-20 h-screen md:h-[40rem] dark:bg-black bg-white relative w-full">
-      <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[40rem] px-4">
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 20,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 1,
-          }}
-          className="div"
-        >
-          <h2 className="text-center text-xl md:text-4xl font-bold text-black dark:text-white">
-            Our Global Presence
+    <section className="py-16 px-4">
+      <div className="container mx-auto">
+        <div className="text-center mb-12">
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 rounded-full sacred-gradient flex items-center justify-center">
+              <Globe className="w-10 h-10 text-white" />
+            </div>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-gradient mb-6">
+            Global Presence
           </h2>
-          <p className="text-center text-base md:text-lg font-normal text-neutral-700 dark:text-neutral-200 max-w-md mt-2 mx-auto">
-            Explore our temples and centers around the world.
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Since its founding in 1875, Arya Samaj has spread across the world, establishing 
+            branches in numerous countries. Today, millions of followers practice Vedic principles 
+            and contribute to social welfare in their communities globally.
           </p>
-        </motion.div>
-        <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-white z-40" />
-        <div className="absolute w-full -bottom-20 h-72 md:h-full z-10">
-          <Globe data={sampleArcs} globeConfig={globeConfig} />
         </div>
+
+        <Card className="temple-shadow max-w-4xl mx-auto">
+          <CardHeader>
+            <CardTitle className="text-2xl text-center">
+              Arya Samaj Centers Worldwide
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {countries.map((country, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                >
+                  <span className="text-primary">•</span>
+                  <span className="text-sm font-medium">{country}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-muted-foreground text-center mt-6">
+              And many more countries across all continents...
+            </p>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </section>
   );
 };
 

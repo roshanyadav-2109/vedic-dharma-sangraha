@@ -91,14 +91,3 @@ export interface GlobalCenter {
   longitude: number | null;
   created_at: string;
 }
-
-export interface Temple {
-  id: number;
-  name: string;
-  country: string;
-  city: string | null;
-  address: string | null;
-  latitude: number;
-  longitude: number;
-  created_at: string;
-}
