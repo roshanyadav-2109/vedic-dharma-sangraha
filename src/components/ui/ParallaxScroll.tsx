@@ -25,7 +25,7 @@ export const ParallaxScroll = ({
           }
         }
         .scrolling-wrapper {
-          animation: scroll 40s linear infinite;
+          animation: scroll 20s linear infinite;
         }
       `}</style>
       <div
