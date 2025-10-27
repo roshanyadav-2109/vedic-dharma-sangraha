@@ -1,6 +1,6 @@
 "use client";
 import { useScroll, useTransform } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -17,26 +17,16 @@ export const ParallaxScroll = ({
     offset: ["start start", "end start"],
   });
 
-  const [scrollDirection, setScrollDirection] = useState<"up" | "down">("down");
-
   useEffect(() => {
     const scroll = () => {
       if (gridRef.current) {
-        if (scrollDirection === "down") {
-          if (
-            gridRef.current.scrollTop <
-            gridRef.current.scrollHeight - gridRef.current.clientHeight
-          ) {
-            gridRef.current.scrollTop += 0.5;
-          } else {
-            setScrollDirection("up");
-          }
+        if (
+          gridRef.current.scrollTop <
+          gridRef.current.scrollHeight - gridRef.current.clientHeight
+        ) {
+          gridRef.current.scrollTop += 0.5;
         } else {
-          if (gridRef.current.scrollTop > 0) {
-            gridRef.current.scrollTop -= 0.5;
-          } else {
-            setScrollDirection("down");
-          }
+          gridRef.current.scrollTop = 0;
         }
       }
     };
@@ -44,7 +34,7 @@ export const ParallaxScroll = ({
     const intervalId = setInterval(scroll, 15);
 
     return () => clearInterval(intervalId);
-  }, [scrollDirection]);
+  }, []);
 
   const translateYFirst = useTransform(scrollYProgress, [0, 1], [0, -200]);
   const translateXFirst = useTransform(scrollYProgress, [0, 1], [0, -200]);
@@ -61,68 +51,82 @@ export const ParallaxScroll = ({
   const thirdPart = images.slice(2 * third);
 
   return (
-    <div
-      className={cn("h-[40rem] items-start overflow-y-auto w-full", className)}
-      ref={gridRef}
-    >
+    <>
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+      `}</style>
       <div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start max-w-5xl mx-auto gap-10 py-40 px-10"
+        className={cn(
+          "h-[40rem] items-start overflow-y-auto w-full no-scrollbar",
+          className
+        )}
         ref={gridRef}
       >
-        <div className="grid gap-10">
-          {firstPart.map((el, idx) => (
-            <motion.div
-              style={{
-                y: translateYFirst,
-                x: translateXFirst,
-                rotateZ: rotateXFirst,
-              }}
-              key={"grid-1" + idx}
-            >
-              <img
-                src={el}
-                className="h-80 w-full object-cover object-left-top rounded-lg gap-10 !m-0 !p-0"
-                height="400"
-                width="400"
-                alt="thumbnail"
-              />
-            </motion.div>
-          ))}
-        </div>
-        <div className="grid gap-10">
-          {secondPart.map((el, idx) => (
-            <motion.div key={"grid-2" + idx}>
-              <img
-                src={el}
-                className="h-80 w-full object-cover object-left-top rounded-lg gap-10 !m-0 !p-0"
-                height="400"
-                width="400"
-                alt="thumbnail"
-              />
-            </motion.div>
-          ))}
-        </div>
-        <div className="grid gap-10">
-          {thirdPart.map((el, idx) => (
-            <motion.div
-              style={{
-                y: translateYThird,
-                x: translateXThird,
-                rotateZ: rotateXThird,
-              }}
-              key={"grid-3" + idx}
-            >
-              <img
-                src={el}
-                className="h-80 w-full object-cover object-left-top rounded-lg gap-10 !m-0 !p-0"
-                height="400"
-                width="400"
-                alt="thumbnail"
-              />
-            </motion.div>
-          ))}
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start max-w-5xl mx-auto gap-10 py-40 px-10"
+          ref={gridRef}
+        >
+          <div className="grid gap-10">
+            {firstPart.map((el, idx) => (
+              <motion.div
+                style={{
+                  y: translateYFirst,
+                  x: translateXFirst,
+                  rotateZ: rotateXFirst,
+                }}
+                key={"grid-1" + idx}
+              >
+                <img
+                  src={el}
+                  className="h-80 w-full object-cover object-left-top rounded-lg gap-10 !m-0 !p-0"
+                  height="400"
+                  width="400"
+                  alt="thumbnail"
+                />
+              </motion.div>
+            ))}
+          </div>
+          <div className="grid gap-10">
+            {secondPart.map((el, idx) => (
+              <motion.div key={"grid-2" + idx}>
+                <img
+                  src={el}
+                  className="h-80 w-full object-cover object-left-top rounded-lg gap-10 !m-0 !p-0"
+                  height="400"
+                  width="400"
+                  alt="thumbnail"
+                />
+              </motion.div>
+            ))}
+          </div>
+          <div className="grid gap-10">
+            {thirdPart.map((el, idx) => (
+              <motion.div
+                style={{
+                  y: translateYThird,
+                  x: translateXThird,
+                  rotateZ: rotateXThird,
+                }}
+                key={"grid-3" + idx}
+              >
+                <img
+                  src={el}
+                  className="h-80 w-full object-cover object-left-top rounded-lg gap-10 !m-0 !p-0"
+                  height="400"
+                  width="400"
+                  alt="thumbnail"
+                />
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
