@@ -1,7 +1,5 @@
 "use client";
-import { useScroll, useTransform } from "framer-motion";
-import { useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useRef } from "react";
 import { cn } from "@/lib/utils";
 
 export const ParallaxScroll = ({
@@ -12,40 +10,8 @@ export const ParallaxScroll = ({
   className?: string;
 }) => {
   const gridRef = useRef<any>(null);
-  const { scrollYProgress } = useScroll({
-    container: gridRef,
-    offset: ["start start", "end start"],
-  });
-
-  useEffect(() => {
-    const scroll = () => {
-      if (gridRef.current) {
-        if (
-          gridRef.current.scrollTop <
-          gridRef.current.scrollHeight - gridRef.current.clientHeight
-        ) {
-          gridRef.current.scrollTop += 0.5;
-        } else {
-          gridRef.current.scrollTop = 0;
-        }
-      }
-    };
-
-    const intervalId = setInterval(scroll, 15);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const translateYFirst = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const translateXFirst = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const rotateXFirst = useTransform(scrollYProgress, [0, 1], [0, -20]);
-
-  const translateYThird = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const translateXThird = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const rotateXThird = useTransform(scrollYProgress, [0, 1], [0, 20]);
 
   const third = Math.ceil(images.length / 3);
-
   const firstPart = images.slice(0, third);
   const secondPart = images.slice(third, 2 * third);
   const thirdPart = images.slice(2 * third);
@@ -53,77 +19,99 @@ export const ParallaxScroll = ({
   return (
     <>
       <style>{`
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+        @keyframes scroll {
+          to {
+            transform: translateY(-50%);
+          }
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .scrolling-wrapper {
+          animation: scroll 40s linear infinite;
         }
       `}</style>
       <div
-        className={cn(
-          "h-[40rem] items-start overflow-y-auto w-full no-scrollbar",
-          className
-        )}
+        className={cn("h-[40rem] w-full items-start overflow-hidden", className)}
         ref={gridRef}
       >
         <div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start max-w-5xl mx-auto gap-10 py-40 px-10"
-          ref={gridRef}
+          className="grid grid-cols-1 items-start max-w-5xl mx-auto gap-10 md:grid-cols-2 lg:grid-cols-3 px-10"
         >
           <div className="grid gap-10">
-            {firstPart.map((el, idx) => (
-              <motion.div
-                style={{
-                  y: translateYFirst,
-                  x: translateXFirst,
-                  rotateZ: rotateXFirst,
-                }}
-                key={"grid-1" + idx}
-              >
-                <img
-                  src={el}
-                  className="h-80 w-full object-cover object-left-top rounded-lg gap-10 !m-0 !p-0"
-                  height="400"
-                  width="400"
-                  alt="thumbnail"
-                />
-              </motion.div>
-            ))}
+            <div className="scrolling-wrapper">
+              {firstPart.map((el, idx) => (
+                <div key={"grid-1" + idx} className="mb-10">
+                  <img
+                    src={el}
+                    className="h-80 w-full object-cover object-left-top rounded-lg !m-0 !p-0"
+                    height="400"
+                    width="400"
+                    alt="thumbnail"
+                  />
+                </div>
+              ))}
+              {firstPart.map((el, idx) => (
+                <div key={"grid-1-duplicate-" + idx} className="mb-10">
+                  <img
+                    src={el}
+                    className="h-80 w-full object-cover object-left-top rounded-lg !m-0 !p-0"
+                    height="400"
+                    width="400"
+                    alt="thumbnail"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
           <div className="grid gap-10">
-            {secondPart.map((el, idx) => (
-              <motion.div key={"grid-2" + idx}>
-                <img
-                  src={el}
-                  className="h-80 w-full object-cover object-left-top rounded-lg gap-10 !m-0 !p-0"
-                  height="400"
-                  width="400"
-                  alt="thumbnail"
-                />
-              </motion.div>
-            ))}
+             <div className="scrolling-wrapper">
+              {secondPart.map((el, idx) => (
+                <div key={"grid-2" + idx} className="mb-10">
+                  <img
+                    src={el}
+                    className="h-80 w-full object-cover object-left-top rounded-lg !m-0 !p-0"
+                    height="400"
+                    width="400"
+                    alt="thumbnail"
+                  />
+                </div>
+              ))}
+               {secondPart.map((el, idx) => (
+                <div key={"grid-2-duplicate-" + idx} className="mb-10">
+                  <img
+                    src={el}
+                    className="h-80 w-full object-cover object-left-top rounded-lg !m-0 !p-0"
+                    height="400"
+                    width="400"
+                    alt="thumbnail"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
           <div className="grid gap-10">
-            {thirdPart.map((el, idx) => (
-              <motion.div
-                style={{
-                  y: translateYThird,
-                  x: translateXThird,
-                  rotateZ: rotateXThird,
-                }}
-                key={"grid-3" + idx}
-              >
-                <img
-                  src={el}
-                  className="h-80 w-full object-cover object-left-top rounded-lg gap-10 !m-0 !p-0"
-                  height="400"
-                  width="400"
-                  alt="thumbnail"
-                />
-              </motion.div>
-            ))}
+            <div className="scrolling-wrapper">
+              {thirdPart.map((el, idx) => (
+                <div key={"grid-3" + idx} className="mb-10">
+                  <img
+                    src={el}
+                    className="h-80 w-full object-cover object-left-top rounded-lg !m-0 !p-0"
+                    height="400"
+                    width="400"
+                    alt="thumbnail"
+                  />
+                </div>
+              ))}
+              {thirdPart.map((el, idx) => (
+                <div key={"grid-3-duplicate-" + idx} className="mb-10">
+                  <img
+                    src={el}
+                    className="h-80 w-full object-cover object-left-top rounded-lg !m-0 !p-0"
+                    height="400"
+                    width="400"
+                    alt="thumbnail"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
