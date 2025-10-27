@@ -54,7 +54,139 @@ const RitualPage = () => {
     retry: 1,
   });
 
-  // ... (handleRecite, handleCopy, renderContent functions remain the same) ...
+  const handleRecite = (mantraText: string, mantraIndex: number) => {
+    if (speakingMantraIndex === mantraIndex) {
+      window.speechSynthesis.cancel();
+      setSpeakingMantraIndex(null);
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(mantraText);
+    utterance.lang = "hi-IN";
+    utterance.rate = 0.8;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => {
+      setSpeakingMantraIndex(mantraIndex);
+      toast.success("मंत्र उच्चारण शुरू");
+    };
+    utterance.onend = () => setSpeakingMantraIndex(null);
+    utterance.onerror = () => {
+      setSpeakingMantraIndex(null);
+      toast.error("उच्चारण में त्रुटि");
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handleCopy = async (mantraText: string, mantraIndex: number) => {
+    try {
+      await navigator.clipboard.writeText(mantraText);
+      setCopiedMantraIndex(mantraIndex);
+      toast.success("मंत्र कॉपी हो गया!");
+      setTimeout(() => setCopiedMantraIndex(null), 2000);
+    } catch (err) {
+      toast.error("कॉपी करने में त्रुटि");
+    }
+  };
+
+  const renderContent = (contentJson: any) => {
+    if (!contentJson || !Array.isArray(contentJson)) return null;
+
+    let mantraCounter = 0;
+
+    return (contentJson as ContentItem[]).map((item, index) => {
+      const key = `${item.type}-${index}`;
+      switch (item.type) {
+        case "heading":
+          return (
+            <h2
+              key={key}
+              className="text-3xl font-bold font-devanagari text-gradient mt-12 mb-6"
+            >
+              {item.content}
+            </h2>
+          );
+        case "subheading":
+          return (
+            <h3
+              key={key}
+              className="text-2xl font-bold font-devanagari text-primary mt-8 mb-4"
+            >
+              {item.content}
+            </h3>
+          );
+        case "instruction":
+          return (
+            <p
+              key={key}
+              className="font-devanagari text-lg text-muted-foreground mb-6"
+            >
+              {item.content}
+            </p>
+          );
+        case "mantra": {
+          const currentMantraIndex = mantraCounter;
+          mantraCounter++;
+          return (
+            <div
+              key={key}
+              className="group relative my-8 p-6 rounded-lg border-2 border-primary/10 bg-primary/5 hover:border-primary/20 transition-all"
+            >
+              <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  onClick={() => handleRecite(item.content, currentMantraIndex)}
+                  size="sm"
+                  variant="outline"
+                >
+                  {speakingMantraIndex === currentMantraIndex ? (
+                    <VolumeX className="w-4 h-4" />
+                  ) : (
+                    <Volume2 className="w-4 h-4" />
+                  )}
+                </Button>
+                <Button
+                  onClick={() => handleCopy(item.content, currentMantraIndex)}
+                  size="sm"
+                  variant="outline"
+                >
+                  {copiedMantraIndex === currentMantraIndex ? (
+                    <Check className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+              {item.title && (
+                <p className="font-devanagari font-bold text-primary mb-3">
+                  {item.title}
+                </p>
+              )}
+              <p className="font-sanskrit text-2xl leading-loose text-foreground select-all">
+                {item.content}
+              </p>
+              {item.purpose && (
+                <p className="font-devanagari text-sm text-muted-foreground mt-3">
+                  ({item.purpose})
+                </p>
+              )}
+            </div>
+          );
+        }
+        case "translation":
+          return (
+            <p
+              key={key}
+              className="font-devanagari text-base italic text-muted-foreground mb-6"
+            >
+              <strong>अर्थ:</strong> {item.content}
+            </p>
+          );
+        default:
+          return null;
+      }
+    });
+  };
 
   if (isLoading) {
     return (
