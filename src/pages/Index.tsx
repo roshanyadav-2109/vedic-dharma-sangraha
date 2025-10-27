@@ -7,7 +7,7 @@ import DisciplesSection from "@/components/DisciplesSection";
 import CoreTenets from "@/components/CoreTenets";
 import SocialHumanitarianEfforts from "@/components/SocialHumanitarianEfforts";
 import EventsNews from "@/components/EventsNews";
-import PhotoVideoGallery from "@/components/PhotoVideoGallery";
+import PhotoVideoGallery from "@/components/ui/PhotoVideoGallery";
 import GlobalPresence from "@/components/GlobalPresence";
 
 const Index = () => {
