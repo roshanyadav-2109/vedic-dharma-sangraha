@@ -1,33 +1,29 @@
 // src/components/ui/globe.tsx
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Sphere } from "@react-three/drei";
-import { geoGraticule10 } from "d3-geo";
-import { geoOrthographic, geoPath } from "d3-geo";
+import { geoGraticule10, geoOrthographic, geoPath } from "d3-geo";
 
 const Dots = () => {
-  const [points] = useState(() => {
-    const graticule = geoGraticule10();
-    const sphere = { type: "Sphere" };
-    const projection = geoOrthographic().fitSize([2, 2], sphere);
-    const path = geoPath(projection);
+  const graticule = geoGraticule10();
+  const sphere = { type: "Sphere" as const };
+  const projection = geoOrthographic().fitSize([2, 2], sphere);
 
-    const lineStrings = graticule.lines;
-    const dots: THREE.Vector3[] = [];
+  // Correctly generate the line strings
+  const lineStrings = graticule.lines;
+  const dots: THREE.Vector3[] = [];
 
-    lineStrings.forEach((ls) => {
-        if(ls && ls.coordinates && ls.coordinates.length > 0)
-        {
-            ls.coordinates.forEach((c) => {
-                const [x, y, z] = projection(c as [number, number]) || [0, 0, 0];
-                dots.push(new THREE.Vector3(x, y, z));
-            })
+  lineStrings.forEach((ls) => {
+    if (ls && ls.coordinates && ls.coordinates.length > 0) {
+      ls.coordinates.forEach((c) => {
+        const [x, y, z] = projection(c as [number, number]) || [0, 0, 0];
+        if (x !== 0 || y !== 0 || z !== 0) {
+            dots.push(new THREE.Vector3(x, y, z));
         }
-    });
-
-    return dots;
+      });
+    }
   });
 
   return (
@@ -35,8 +31,8 @@ const Dots = () => {
       <bufferGeometry attach="geometry">
         <bufferAttribute
           attach="attributes-position"
-          count={points.length}
-          array={new Float32Array(points.flatMap((p) => p.toArray()))}
+          count={dots.length}
+          array={new Float32Array(dots.flatMap((p) => p.toArray()))}
           itemSize={3}
         />
       </bufferGeometry>
@@ -54,9 +50,6 @@ const Dots = () => {
 const World = (props: any) => {
   const { globeConfig } = props;
   const {
-    pointSize,
-    atmosphereColor,
-    atmosphereAltitude,
     polygonColor,
     emissive,
     emissiveIntensity,
