@@ -1,6 +1,6 @@
 "use client";
 import { useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -13,9 +13,38 @@ export const ParallaxScroll = ({
 }) => {
   const gridRef = useRef<any>(null);
   const { scrollYProgress } = useScroll({
-    container: gridRef, // remove this if your container is not fixed height
-    offset: ["start start", "end start"], // remove this if your container is not fixed height
+    container: gridRef,
+    offset: ["start start", "end start"],
   });
+
+  const [scrollDirection, setScrollDirection] = useState<"up" | "down">("down");
+
+  useEffect(() => {
+    const scroll = () => {
+      if (gridRef.current) {
+        if (scrollDirection === "down") {
+          if (
+            gridRef.current.scrollTop <
+            gridRef.current.scrollHeight - gridRef.current.clientHeight
+          ) {
+            gridRef.current.scrollTop += 0.5;
+          } else {
+            setScrollDirection("up");
+          }
+        } else {
+          if (gridRef.current.scrollTop > 0) {
+            gridRef.current.scrollTop -= 0.5;
+          } else {
+            setScrollDirection("down");
+          }
+        }
+      }
+    };
+
+    const intervalId = setInterval(scroll, 15);
+
+    return () => clearInterval(intervalId);
+  }, [scrollDirection]);
 
   const translateYFirst = useTransform(scrollYProgress, [0, 1], [0, -200]);
   const translateXFirst = useTransform(scrollYProgress, [0, 1], [0, -200]);
@@ -47,7 +76,7 @@ export const ParallaxScroll = ({
                 y: translateYFirst,
                 x: translateXFirst,
                 rotateZ: rotateXFirst,
-              }} // Apply the translateY motion value here
+              }}
               key={"grid-1" + idx}
             >
               <img
